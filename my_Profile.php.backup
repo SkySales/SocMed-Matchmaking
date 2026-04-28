@@ -1,0 +1,246 @@
+<?php
+session_start();
+include("config.php");
+
+if(!isset($_SESSION['id'])){
+    header('location: login.php');
+    exit;
+}
+
+$user_id = $_SESSION['id'];
+
+/* ✅ GET USER DATA FROM DATABASE */
+$stmt = $conn->prepare("SELECT * FROM users WHERE User_ID = ?");
+$stmt->bind_param("i", $user_id);
+$stmt->execute();
+$user = $stmt->get_result()->fetch_assoc();
+
+$tags_stmt = $conn->prepare("
+    SELECT t.Tag_Name 
+    FROM user_tags ut
+    JOIN tags t ON ut.Tag_ID = t.Tag_ID
+    WHERE ut.User_ID = ?
+");
+$tags_stmt->bind_param("i", $user_id);
+$tags_stmt->execute();
+$tags_result = $tags_stmt->get_result();
+?>
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>EventsWave</title>
+
+    <link rel="icon" href="assets/images/event_accepted_50px.png" type="image/icon type">
+
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css">
+
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.15.4/css/all.css" integrity="sha384-DyZ88mC6Up2uqS4h/KRgHuoeGwBcD4Ng9SiP4dIRy0EXTlnuz47vAwmeGwVChigm" crossorigin="anonymous"/>
+
+    <link rel="stylesheet" href="assets/css/style.css">
+<!-- 
+    <link rel="stylesheet" href="assets/css/section.css">
+    
+    <link rel="stylesheet" href="assets/css/posting.css"> -->
+
+    <!-- <link rel="stylesheet" href="assets/css/responsive.css"> -->
+<!-- 
+    <link rel="stylesheet" href="assets/css/right_col.css">
+    
+    <link rel="stylesheet" href="assets/css/profile-page.css"> -->
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p" crossorigin="anonymous"></script>
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css" integrity="sha512-KfkfwYDsLkIlwQp6LFnl8zNdLGxu9YAA1QvwINks4PhcElQSvqcyVLLD9aMhXd13uQjoXtEKNosOWaZqXgel0g==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.1/jquery.min.js"></script>
+
+<style>
+.profile-head { transform: translateY(5rem); }
+
+.cover {
+    background-image: url(https://images.unsplash.com/photo-1530305408560-82d13781b33a);
+    background-size: cover;
+    border-radius: 10px;
+}
+
+body {
+    background: #ffffff;
+    min-height: 100vh;
+}
+
+.badge-primary {
+    background: linear-gradient(45deg, #0d6efd, #6610f2);
+    border-radius: 20px;
+}
+</style>
+
+</head>
+
+<body>
+
+<!-- NAVBAR -->
+  <nav class="navbar mobile-nav">
+
+      <div class="nav-wrapper">
+          <img src="assets/images/black_logo.png" class="brand-img" id="logo-img" style="cursor: pointer">
+
+          <div class="nav-items">
+
+              <a href="home.php" style="text-decoration: none; color: #1c1f23"><i class="icon fas fa-home fa-lg"></i></a>
+
+              <i class="icon fas fa-search fa-lg" data-bs-toggle="modal" data-bs-target="#search-model"></i>
+              <a href="Events.php" style="text-decoration: none; color: #1c1f23"><i class="icon fas fa-flag fa-lg"></i></a>
+              <a href="shorts.php" style="text-decoration: none; color: #1c1f23"><i class="icon fas fa-video fa-lg"></i></a>
+              <a href="Event-Calander/index.php" style="text-decoration: none; color: #1c1f23"><i class="icon fas fa-calendar-alt fa-lg"></i></a>
+              <div class="icon user-profile">
+                  <a href="my_Profile.php" ><i class="fas fa-user-circle fa-lg"></i></a>
+              </div>
+
+          </div>
+      </div>
+
+  </nav>
+
+<!-- Search Modal -->
+<div class="modal fade" id="search-model" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-body">
+                <form method="post" action="Results.php">
+                    <input type="search" name="find" class="form-control rounded" placeholder="Search" aria-label="Search" aria-describedby="search-addon" />
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- PROFILE -->
+<div class="row py-6 px-4">
+<div class="col-md-11 mx-auto">
+
+<div class="bg-white shadow rounded overflow-hidden">
+
+<!-- COVER -->
+<div class="px-4 pt-0 pb-4 cover">
+
+<div class="media align-items-end profile-head">
+
+<div class="profile mr-3">
+<img src="<?php echo 'assets/images/profiles/'.$user['IMAGE']; ?>" width="160" style="border-radius:50%;">
+
+<form action="edit-profile.php">
+<button class="btn btn-outline-light btn-sm mt-2">Edit Profile</button>
+</form>
+</div>
+
+<div class="media-body mb-5 text-white">
+<h4><?php echo $user['USER_NAME']; ?></h4>
+<p><?php echo $user['FULL_NAME']; ?></p>
+</div>
+
+</div>
+</div>
+
+<!-- STATS -->
+<div class="bg-light p-4 d-flex justify-content-end text-center">
+
+<ul class="list-inline mb-0">
+
+<li class="list-inline-item">
+<h5><?php echo $user['POSTS'] ?? 0; ?></h5>
+<small>Posts</small>
+</li>
+
+<li class="list-inline-item">
+<h5><?php echo $user['FALLOWERS'] ?? 0; ?></h5>
+<small>Followers</small>
+</li>
+
+<li class="list-inline-item">
+<h5><?php echo $user['FALLOWING'] ?? 0; ?></h5>
+<small>Following</small>
+</li>
+
+</ul>
+
+</div>
+
+<!-- ABOUT -->
+<div class="px-4 py-3">
+<h5>About</h5>
+
+<div class="p-4 bg-light rounded">
+<p><?php echo $user['BIO']; ?></p>
+</div>
+</div>
+
+<div class="px-4 py-3">
+    <h5 class="mb-2">Interests</h5>
+
+    <div class="p-3 bg-light rounded">
+
+        <?php if($tags_result->num_rows > 0){ ?>
+            
+            <?php while($tag = $tags_result->fetch_assoc()){ ?>
+                <span class="badge badge-primary m-1" style="padding:8px 12px; font-size:14px;">
+                    <?php echo $tag['Tag_Name']; ?>
+                </span>
+            <?php } ?>
+
+        <?php } else { ?>
+            <p class="text-muted">No tags selected yet.</p>
+        <?php } ?>
+
+    </div>
+</div>
+
+<!-- SOCIAL -->
+<div class="px-4 py-3">
+<h5>Social</h5>
+
+<div class="p-4 bg-light rounded">
+<p>Email: <?php echo $user['EMAIL']; ?></p>
+<p>Facebook: <?php echo $user['FACEBOOK']; ?></p>
+<p>WhatsApp: <?php echo $user['WHATSAPP']; ?></p>
+</div>
+</div>
+
+<!-- POSTS -->
+<div class="py-4 px-4">
+
+<h5>Recent Posts</h5>
+
+<div class="row">
+
+<?php
+$posts = $conn->query("SELECT * FROM posts WHERE User_ID = $user_id ORDER BY Post_ID DESC");
+
+while($post = $posts->fetch_assoc()){
+?>
+
+<div class="col-md-4 mb-3">
+    <img src="<?php echo 'assets/images/posts/'.$post['Img_Path']; ?>" style="width:100%; border-radius:10px;">
+</div>
+
+<?php } ?>
+
+</div>
+</div>
+
+</div>
+</div>
+</div>
+
+<script>
+document.getElementById("logo-img").onclick = function(){
+    location.href = "home.php";
+}
+</script>
+
+</body>
+</html>

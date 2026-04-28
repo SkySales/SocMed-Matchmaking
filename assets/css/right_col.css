@@ -1,0 +1,47 @@
+.right-col {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+/* CARD STYLE */
+.style-wrapper,
+.profile-cards {
+    background: var(--card);
+    border-radius: 15px;
+    padding: 15px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+}
+
+/* USER CARD */
+.suggestion_card {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.suggestion_card img {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+}
+
+.suggesting {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--muted);
+    margin-top: 10px;
+}
+
+/* PROFILE LIST ITEM */
+.profile-cards {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+/* TEXT */
+.sub-text {
+    font-size: 12px;
+    color: var(--muted);
+}
