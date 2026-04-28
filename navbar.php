@@ -507,6 +507,14 @@
                     </a>
                 </li>
 
+                <!-- Lobby -->
+                <li class="nav-item">
+                    <a class="nav-link-icon" href="lobby/lobby_room.php" title="Events">
+                        <i class="fa-solid fa-champagne-glasses"></i>
+                        <span class="nav-link-text d-lg-none">Lobby</span>
+                    </a>
+                </li>
+
                 <!-- Videos -->
                 <li class="nav-item">
                     <a class="nav-link-icon" href="shorts.php" title="Videos">
