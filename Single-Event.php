@@ -16,6 +16,8 @@ session_regenerate_id(true);
 
     <link rel="icon" href="assets/images/event_accepted_50px.png" type="image/icon type">
 
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.rtl.min.css" integrity="sha384-+qdLaIRZfNu4cVPK/PxJJEy0B0f3Ugv8i482AKY7gwXwhaCroABd086ybrVKTa0q" crossorigin="anonymous">
 
     <!--<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.15.4/css/all.css" integrity="sha384-DyZ88mC6Up2uqS4h/KRgHuoeGwBcD4Ng9SiP4dIRy0EXTlnuz47vAwmeGwVChigm" crossorigin="anonymous"/>-->
@@ -102,30 +104,7 @@ session_regenerate_id(true);
 
 <!-- Nav Bar Design -->
 
-<nav class="navbar">
-
-    <div class="nav-wrapper">
-
-        <img src="assets/images/black_logo.png" class="brand-img" id="logo-img">
-
-        <div class="nav-items">
-
-            <a href="Events.php" style="text-decoration: none; color: #1c1f23"><i class="icon fas fa-flag fa-lg"></i></a>
-
-            <a href="shorts.php" style="text-decoration: none; color: #1c1f23"><i class="icon fas fa-video fa-lg"></i></a>
-
-
-            <div class="icon user-profile">
-
-                <a href="my_Profile.php" ><i class="fas fa-user-circle fa-lg"></i></a>
-
-            </div>
-
-        </div>
-
-    </div>
-
-</nav>
+<?php include('navbar.php'); ?>
 
 <!-- New Section -->
 

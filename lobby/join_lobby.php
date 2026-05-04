@@ -2,336 +2,291 @@
 session_start();
 include("../config.php");
 
-// Check if there's a specific lobby_id from invite link
+if(!isset($_SESSION['id'])){
+    header("location: ../login.php");
+    exit;
+}
+
+$user_id = $_SESSION['id'];
+
+// Invite lobby check
 $specific_lobby_id = isset($_GET['lobby_id']) ? $_GET['lobby_id'] : null;
 
 if($specific_lobby_id) {
-    // Verify the lobby exists
     $check = $conn->prepare("SELECT * FROM lobbies WHERE Lobby_ID = ?");
     $check->bind_param("i", $specific_lobby_id);
     $check->execute();
     $lobby = $check->get_result()->fetch_assoc();
-    
-    if($lobby) {
-        // Auto join if public lobby, or show join form if private
-        if(!$lobby['Is_Private']) {
-            // Direct join for public lobby
-            $join = $conn->prepare("INSERT IGNORE INTO lobby_members (Lobby_ID, User_ID) VALUES (?, ?)");
-            $join->bind_param("ii", $specific_lobby_id, $_SESSION['id']);
-            $join->execute();
-            header("location: lobby_room.php?id=" . $specific_lobby_id);
-            exit;
-        }
+
+    if($lobby && !$lobby['Is_Private']) {
+        $join = $conn->prepare("INSERT IGNORE INTO lobby_members (Lobby_ID, User_ID) VALUES (?, ?)");
+        $join->bind_param("ii", $specific_lobby_id, $user_id);
+        $join->execute();
+        header("location: lobby_room.php?id=" . $specific_lobby_id);
+        exit;
     }
 }
 
+// Fetch lobbies
 $result = $conn->query("SELECT * FROM lobbies ORDER BY Created_At DESC");
 ?>
 
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Join Lobby</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link rel="stylesheet" href="../assets/css/style.css">
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GetMatch - Lobbies</title>
 
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            min-height: 100vh;
-            padding: 40px 20px;
-        }
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
-        .container-lobbies {
-            max-width: 900px;
-            margin: 0 auto;
-        }
+<style>
+:root {
+    --primary: #dc3545;
+    --primary-dark: #a02834;
+    --bg-dark: #1a1a1a;
+    --bg-card: #2d2d2d;
+    --text-light: #d0d0d0;
+    --border: #404040;
+}
 
-        .header-section {
-            text-align: center;
-            color: white;
-            margin-bottom: 50px;
-            animation: slideDown 0.5s ease-out;
-        }
+body {
+    font-family: 'Segoe UI', sans-serif;
+    background: linear-gradient(135deg, #1a1a1a, #2d2d2d);
+    padding: 40px 20px;
+    color: white;
+}
 
-        @keyframes slideDown {
-            from {
-                opacity: 0;
-                transform: translateY(-30px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
+/* HEADER */
+.header {
+    text-align: center;
+    margin-bottom: 40px;
+}
 
-        .header-section h1 {
-            font-size: 36px;
-            margin-bottom: 10px;
-        }
+.header h1 {
+    color: var(--primary);
+    font-size: 32px;
+}
 
-        .header-section p {
-            font-size: 16px;
-            opacity: 0.9;
-            margin-bottom: 20px;
-        }
+.header p {
+    color: var(--text-light);
+}
 
-        .action-buttons {
-            display: flex;
-            gap: 15px;
-            justify-content: center;
-            flex-wrap: wrap;
-        }
+/* BUTTONS */
+.actions {
+    margin-top: 15px;
+}
 
-        .btn {
-            padding: 12px 30px;
-            border-radius: 10px;
-            text-decoration: none;
-            font-weight: 600;
-            border: none;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-            font-size: 14px;
-        }
+.btn {
+    padding: 10px 20px;
+    border-radius: 8px;
+    text-decoration: none;
+    font-weight: 600;
+    margin: 5px;
+    display: inline-block;
+}
 
-        .btn-primary {
-            background: white;
-            color: #667eea;
-        }
+.btn-primary {
+    background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+    color: white;
+}
 
-        .btn-primary:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
-        }
+.btn-secondary {
+    border: 2px solid var(--primary);
+    color: var(--primary);
+}
 
-        .btn-secondary {
-            background: rgba(255, 255, 255, 0.2);
-            color: white;
-            border: 2px solid white;
-        }
+.btn:hover {
+    opacity: 0.9;
+}
 
-        .btn-secondary:hover {
-            background: white;
-            color: #667eea;
-        }
+/* SEARCH */
+.search-box {
+    max-width: 500px;
+    margin: 20px auto;
+}
 
-        .lobbies-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-            gap: 25px;
-            margin-top: 40px;
-        }
+.search-box input {
+    width: 100%;
+    padding: 10px;
+    border-radius: 8px;
+    border: 1px solid var(--border);
+    background: #1a1a1a;
+    color: white;
+}
 
-        .lobby-item {
-            background: white;
-            border-radius: 15px;
-            padding: 25px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
-            transition: all 0.3s ease;
-            animation: fadeIn 0.5s ease-out;
-        }
+/* GRID */
+.lobbies {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 20px;
+}
 
-        @keyframes fadeIn {
-            from {
-                opacity: 0;
-                transform: translateY(20px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
+/* CARD */
+.card {
+    background: var(--bg-card);
+    padding: 20px;
+    border-radius: 12px;
+    border: 1px solid var(--border);
+    transition: 0.3s;
+}
 
-        .lobby-item:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.15);
-        }
+.card:hover {
+    border-color: var(--primary);
+    transform: translateY(-5px);
+}
 
-        .lobby-title {
-            font-size: 20px;
-            font-weight: 700;
-            color: #333;
-            margin-bottom: 15px;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
+.highlight {
+    border: 2px solid var(--primary);
+}
 
-        .lobby-badge {
-            display: inline-flex;
-            align-items: center;
-            gap: 5px;
-            padding: 5px 12px;
-            background: #f0f1f5;
-            border-radius: 20px;
-            font-size: 12px;
-            color: #666;
-            font-weight: 600;
-        }
+/* TITLE */
+.title {
+    font-size: 18px;
+    font-weight: 700;
+}
 
-        .lobby-badge.private {
-            background: #ffe6e6;
-            color: #d32f2f;
-        }
+/* BADGE */
+.badge {
+    margin-top: 8px;
+    font-size: 12px;
+    padding: 5px 10px;
+    border-radius: 20px;
+    display: inline-block;
+}
 
-        .lobby-badge.public {
-            background: #e6f7ff;
-            color: #1976d2;
-        }
+.public {
+    background: rgba(40,167,69,0.2);
+    color: #28a745;
+}
 
-        .pin-form {
-            display: flex;
-            gap: 10px;
-            margin-top: 15px;
-        }
+.private {
+    background: rgba(220,53,69,0.2);
+    color: var(--primary);
+}
 
-        .pin-form input {
-            flex: 1;
-            padding: 12px;
-            border: 2px solid #e0e0e0;
-            border-radius: 8px;
-            font-size: 14px;
-            transition: all 0.3s ease;
-        }
+/* PLAYER COUNT */
+.count {
+    margin-top: 10px;
+    font-size: 13px;
+    color: #aaa;
+}
 
-        .pin-form input:focus {
-            outline: none;
-            border-color: #667eea;
-            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
-        }
+/* JOIN */
+.join-btn {
+    margin-top: 15px;
+    width: 100%;
+    padding: 10px;
+    border-radius: 8px;
+    border: none;
+    background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+    color: white;
+    cursor: pointer;
+}
 
-        .btn-join {
-            padding: 12px 25px;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            border: none;
-            border-radius: 8px;
-            cursor: pointer;
-            font-weight: 600;
-            transition: all 0.3s ease;
-            display: inline-flex;
-            align-items: center;
-            gap: 6px;
-            flex: 1;
-        }
+/* PIN */
+.pin input {
+    width: 100%;
+    margin-top: 10px;
+    padding: 8px;
+    border-radius: 6px;
+    border: 1px solid var(--border);
+    background: #1a1a1a;
+    color: white;
+}
 
-        .btn-join:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 20px rgba(102, 126, 234, 0.4);
-        }
-
-        .empty-state {
-            text-align: center;
-            padding: 60px 20px;
-            color: white;
-        }
-
-        .empty-state i {
-            font-size: 64px;
-            margin-bottom: 20px;
-            opacity: 0.7;
-        }
-
-        .empty-state p {
-            font-size: 18px;
-            margin-bottom: 30px;
-        }
-
-        .lobby-item.highlighted {
-            border: 3px solid #667eea;
-            box-shadow: 0 15px 40px rgba(102, 126, 234, 0.3);
-            transform: scale(1.02);
-        }
-
-        .highlight-badge {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            padding: 6px 12px;
-            border-radius: 20px;
-            font-size: 11px;
-            font-weight: 700;
-            display: inline-flex;
-            align-items: center;
-            gap: 4px;
-            margin-bottom: 10px;
-        }
-    </style>
+/* EMPTY */
+.empty {
+    text-align: center;
+    margin-top: 50px;
+    color: var(--text-light);
+}
+</style>
 </head>
+
 <body>
-    <div class="container-lobbies">
-        <div class="header-section">
-            <h1>
-                <i class="fas fa-gamepad"></i> Game Lobbies
-            </h1>
-            <p>Join an existing lobby or create your own</p>
-            <div class="action-buttons">
-                <a href="create_lobby.php" class="btn btn-primary">
-                    <i class="fas fa-plus-circle"></i> Create New Lobby
-                </a>
-                <a href="../home.php" class="btn btn-secondary">
-                    <i class="fas fa-arrow-left"></i> Back Home
-                </a>
-            </div>
-        </div>
 
-        <div class="lobbies-grid">
-            <?php if($result->num_rows > 0): ?>
-                <?php while($row = $result->fetch_assoc()): 
-                    $is_highlighted = $specific_lobby_id && $specific_lobby_id == $row['Lobby_ID'];
-                ?>
-                    <div class="lobby-item <?php echo $is_highlighted ? 'highlighted' : ''; ?>">
-                        <?php if($is_highlighted): ?>
-                            <div class="highlight-badge">
-                                <i class="fas fa-star"></i> Invited Lobby
-                            </div>
-                        <?php endif; ?>
-                        
-                        <div class="lobby-title">
-                            <i class="fas fa-door-open"></i>
-                            <?php echo htmlspecialchars($row['Lobby_Name']); ?>
-                        </div>
+<div class="header">
+    <h1><i class="fas fa-gamepad"></i> GetMatch Lobbies</h1>
+    <p>Find players and join a squad</p>
 
-                        <div class="lobby-badge <?php echo $row['Is_Private'] ? 'private' : 'public'; ?>">
-                            <i class="fas <?php echo $row['Is_Private'] ? 'fa-lock' : 'fa-unlock'; ?>"></i>
-                            <?php echo $row['Is_Private'] ? 'Private' : 'Public'; ?>
-                        </div>
-
-                        <?php if($row['Is_Private']): ?>
-                            <form action="join_process.php" method="post" class="pin-form">
-                                <input type="hidden" name="lobby_id" value="<?php echo $row['Lobby_ID']; ?>">
-                                <input type="password" name="code" placeholder="Enter PIN" required>
-                                <button type="submit" class="btn-join">
-                                    <i class="fas fa-sign-in-alt"></i> Join
-                                </button>
-                            </form>
-                        <?php else: ?>
-                            <a href="join_process.php?lobby_id=<?php echo $row['Lobby_ID']; ?>" class="btn-join" style="text-decoration: none; display: flex; margin-top: 15px;">
-                                <i class="fas fa-sign-in-alt"></i> Join Lobby
-                            </a>
-                        <?php endif; ?>
-                    </div>
-                <?php endwhile; ?>
-            <?php else: ?>
-                <div class="empty-state" style="grid-column: 1/-1;">
-                    <i class="fas fa-inbox"></i>
-                    <p>No lobbies available</p>
-                    <a href="create_lobby.php" class="btn btn-primary">
-                        <i class="fas fa-plus-circle"></i> Create First Lobby
-                    </a>
-                </div>
-            <?php endif; ?>
-        </div>
+    <div class="actions">
+        <a href="create_lobby.php" class="btn btn-primary">+ Create Lobby</a>
+        <a href="../home.php" class="btn btn-secondary">Back</a>
     </div>
+</div>
+
+<div class="search-box">
+    <input type="text" id="search" placeholder="Search lobby...">
+</div>
+
+<div class="lobbies" id="lobbyList">
+
+<?php if($result->num_rows > 0): ?>
+<?php while($row = $result->fetch_assoc()): 
+
+// PLAYER COUNT
+$count_stmt = $conn->prepare("SELECT COUNT(*) as total FROM lobby_members WHERE Lobby_ID=?");
+$count_stmt->bind_param("i", $row['Lobby_ID']);
+$count_stmt->execute();
+$count = $count_stmt->get_result()->fetch_assoc()['total'];
+
+$is_highlight = ($specific_lobby_id == $row['Lobby_ID']);
+?>
+
+<div class="card <?php echo $is_highlight ? 'highlight' : ''; ?>">
+
+    <div class="title">
+        <i class="fas fa-users"></i>
+        <?php echo htmlspecialchars($row['Lobby_Name']); ?>
+    </div>
+
+    <div class="badge <?php echo $row['Is_Private'] ? 'private' : 'public'; ?>">
+        <?php echo $row['Is_Private'] ? 'Private' : 'Public'; ?>
+    </div>
+
+    <div class="count">
+        <i class="fas fa-user"></i> <?php echo $count; ?> players
+    </div>
+
+    <?php if($row['Is_Private']): ?>
+        <form action="join_process.php" method="post" class="pin">
+            <input type="hidden" name="lobby_id" value="<?php echo $row['Lobby_ID']; ?>">
+            <input type="password" name="code" placeholder="Enter PIN" required>
+            <button class="join-btn">Join</button>
+        </form>
+    <?php else: ?>
+        <a href="join_process.php?lobby_id=<?php echo $row['Lobby_ID']; ?>">
+            <button class="join-btn">Join Lobby</button>
+        </a>
+    <?php endif; ?>
+
+</div>
+
+<?php endwhile; ?>
+<?php else: ?>
+
+<div class="empty">
+    <h3>No lobbies yet</h3>
+    <a href="create_lobby.php" class="btn btn-primary">Create First Lobby</a>
+</div>
+
+<?php endif; ?>
+
+</div>
+
+<script>
+// SEARCH FILTER
+document.getElementById("search").addEventListener("keyup", function() {
+    let value = this.value.toLowerCase();
+    let cards = document.querySelectorAll(".card");
+
+    cards.forEach(card => {
+        let text = card.innerText.toLowerCase();
+        card.style.display = text.includes(value) ? "block" : "none";
+    });
+});
+</script>
+
 </body>
 </html>

@@ -12,13 +12,23 @@ if(isset($_POST['create'])){
     $private = isset($_POST['private']) ? 1 : 0;
     $code = $private ? rand(1000,9999) : NULL;
 
+    // OPTIONAL: prevent user from being in multiple lobbies
+    $check = $conn->prepare("SELECT * FROM lobby_members WHERE User_ID=?");
+    $check->bind_param("i", $_SESSION['id']);
+    $check->execute();
+    $existing = $check->get_result();
+
+    if($existing->num_rows > 0){
+        die("❌ You are already in a lobby. Leave it first.");
+    }
+
     $stmt = $conn->prepare("INSERT INTO lobbies (Lobby_Name, Host_ID, Is_Private, Lobby_Code) VALUES (?, ?, ?, ?)");
     $stmt->bind_param("siis", $name, $_SESSION['id'], $private, $code);
     $stmt->execute();
 
     $lobby_id = $stmt->insert_id;
 
-    // auto join host
+    // auto join host (NO DUPLICATE)
     $join = $conn->prepare("INSERT INTO lobby_members (Lobby_ID, User_ID) VALUES (?, ?)");
     $join->bind_param("ii", $lobby_id, $_SESSION['id']);
     $join->execute();
@@ -30,212 +40,236 @@ if(isset($_POST['create'])){
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Create Lobby</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link rel="stylesheet" href="../assets/css/style.css">
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Create Lobby - GetMatch</title>
 
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            min-height: 100vh;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            padding: 20px;
-        }
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
-        .container-lobby {
-            width: 100%;
-            max-width: 500px;
-        }
+<style>
+:root {
+    --primary: #dc3545;
+    --primary-dark: #a02834;
+    --bg-dark: #1a1a1a;
+    --bg-card: #2d2d2d;
+    --border: #404040;
+    --text: #ffffff;
+    --text-light: #bfbfbf;
+}
 
-        .lobby-card {
-            background: white;
-            border-radius: 20px;
-            padding: 40px;
-            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
-            animation: slideUp 0.5s ease-out;
-        }
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
 
-        @keyframes slideUp {
-            from {
-                opacity: 0;
-                transform: translateY(30px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
+body {
+    font-family: 'Segoe UI', sans-serif;
+    background: linear-gradient(135deg, #1a1a1a, #2d2d2d);
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
 
-        .lobby-header {
-            text-align: center;
-            margin-bottom: 30px;
-        }
+/* CARD */
+.lobby-card {
+    background: var(--bg-card);
+    border: 2px solid var(--primary);
+    border-radius: 14px;
+    padding: 40px 30px;
+    width: 100%;
+    max-width: 420px;
+    box-shadow: 0 15px 40px rgba(220,53,69,0.2);
+    animation: fadeIn 0.4s ease;
+}
 
-        .lobby-header h1 {
-            font-size: 32px;
-            color: #333;
-            margin-bottom: 10px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 10px;
-        }
+@keyframes fadeIn {
+    from {opacity:0; transform: translateY(20px);}
+    to {opacity:1; transform: translateY(0);}
+}
 
-        .lobby-header p {
-            color: #999;
-            font-size: 14px;
-        }
+/* HEADER */
+.lobby-header {
+    text-align: center;
+    margin-bottom: 25px;
+}
 
-        .form-group {
-            margin-bottom: 25px;
-        }
+.lobby-header h1 {
+    color: var(--primary);
+    font-size: 26px;
+}
 
-        .form-group label {
-            display: block;
-            margin-bottom: 8px;
-            color: #333;
-            font-weight: 600;
-            font-size: 14px;
-        }
+.lobby-header p {
+    color: var(--text-light);
+    font-size: 14px;
+}
 
-        .form-group input[type="text"] {
-            width: 100%;
-            padding: 15px;
-            border: 2px solid #e0e0e0;
-            border-radius: 10px;
-            font-size: 16px;
-            transition: all 0.3s ease;
-            font-family: inherit;
-        }
+/* INPUT */
+.form-group {
+    margin-bottom: 20px;
+}
 
-        .form-group input[type="text"]:focus {
-            outline: none;
-            border-color: #667eea;
-            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
-        }
+.form-group label {
+    color: var(--text-light);
+    font-size: 13px;
+    margin-bottom: 6px;
+    display: block;
+}
 
-        .checkbox-group {
-            display: flex;
-            align-items: center;
-            padding: 15px;
-            background: #f8f9fa;
-            border-radius: 10px;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            margin-bottom: 25px;
-        }
+.form-group input {
+    width: 100%;
+    padding: 12px;
+    border-radius: 8px;
+    border: 1px solid var(--border);
+    background: #1a1a1a;
+    color: var(--text);
+}
 
-        .checkbox-group:hover {
-            background: #f0f1f5;
-        }
+.form-group input:focus {
+    outline: none;
+    border-color: var(--primary);
+}
 
-        .checkbox-group input[type="checkbox"] {
-            width: 20px;
-            height: 20px;
-            cursor: pointer;
-            accent-color: #667eea;
-        }
+/* CHECKBOX */
+.checkbox-group {
+    display: flex;
+    align-items: center;
+    background: #1a1a1a;
+    border: 1px solid var(--border);
+    padding: 12px;
+    border-radius: 8px;
+    cursor: pointer;
+    margin-bottom: 25px;
+}
 
-        .checkbox-group label {
-            margin: 0 0 0 12px;
-            flex: 1;
-            cursor: pointer;
-            margin-bottom: 0;
-            font-weight: 500;
-        }
+.checkbox-group input {
+    margin-right: 10px;
+    accent-color: var(--primary);
+}
 
-        .btn-create {
-            width: 100%;
-            padding: 15px;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            border: none;
-            border-radius: 10px;
-            font-size: 16px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 8px;
-        }
+.checkbox-group label {
+    color: var(--text-light);
+    font-size: 14px;
+}
 
-        .btn-create:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 10px 25px rgba(102, 126, 234, 0.4);
-        }
+/* BUTTON */
+.btn-create {
+    width: 100%;
+    padding: 12px;
+    border: none;
+    border-radius: 8px;
+    background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+    color: white;
+    font-weight: 600;
+    cursor: pointer;
+    transition: 0.3s;
+}
 
-        .btn-create:active {
-            transform: translateY(0);
-        }
+.btn-create:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(220,53,69,0.4);
+}
 
-        .back-link {
-            text-align: center;
-            margin-top: 20px;
-        }
+/* BACK */
+.back-link {
+    text-align: center;
+    margin-top: 15px;
+}
 
-        .back-link a {
-            color: #667eea;
-            text-decoration: none;
-            font-size: 14px;
-            transition: color 0.3s ease;
-        }
+.back-link a {
+    color: var(--primary);
+    text-decoration: none;
+    font-size: 13px;
+}
 
-        .back-link a:hover {
-            color: #764ba2;
-            text-decoration: underline;
-        }
-    </style>
+.back-link a:hover {
+    color: #ff4d5e;
+}
+
+/* MOBILE RESPONSIVE */
+@media(max-width:480px){
+    body{
+        padding:15px;
+    }
+
+    .lobby-card{
+        padding:25px 20px;
+        max-width:100%;
+    }
+
+    .lobby-header h1{
+        font-size:22px;
+    }
+
+    .lobby-header p{
+        font-size:13px;
+    }
+
+    .form-group input{
+        padding:11px;
+        font-size:14px;
+    }
+
+    .form-group label{
+        font-size:12px;
+    }
+
+    .checkbox-group{
+        padding:10px;
+        font-size:13px;
+    }
+
+    .btn-create{
+        padding:11px;
+        font-size:14px;
+    }
+
+    .back-link a{
+        font-size:12px;
+    }
+}
+</style>
 </head>
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
 <body>
-    <div class="container-lobby">
-        <div class="lobby-card">
-            <div class="lobby-header">
-                <h1>
-                    <i class="fas fa-users-cog"></i>
-                    Create Lobby
-                </h1>
-                <p>Set up a new game lobby and invite players</p>
-            </div>
 
-            <form method="post">
-                <div class="form-group">
-                    <label for="lobby_name">
-                        <i class="fas fa-tag"></i> Lobby Name
-                    </label>
-                    <input type="text" id="lobby_name" name="lobby_name" placeholder="Enter lobby name" required>
-                </div>
+<div class="lobby-card">
 
-                <div class="checkbox-group">
-                    <input type="checkbox" id="private" name="private">
-                    <label for="private">
-                        <i class="fas fa-lock"></i> Private Lobby (with PIN)
-                    </label>
-                </div>
-
-                <button type="submit" name="create" class="btn-create">
-                    <i class="fas fa-plus-circle"></i>
-                    Create Lobby
-                </button>
-            </form>
-
-            <div class="back-link">
-                <a href="join_lobby.php">
-                    <i class="fas fa-arrow-left"></i> Back to Lobbies
-                </a>
-            </div>
-        </div>
+    <div class="lobby-header">
+        <h1><i class="fas fa-users-cog"></i> Create Lobby</h1>
+        <p>Setup your squad and invite players</p>
     </div>
+
+    <form method="post">
+
+        <div class="form-group">
+            <label>Lobby Name</label>
+            <input type="text" name="lobby_name" placeholder="Enter lobby name..." required>
+        </div>
+
+        <div class="checkbox-group">
+            <input type="checkbox" id="private" name="private">
+            <label for="private">
+                <i class="fas fa-lock"></i> Private Lobby (PIN protected)
+            </label>
+        </div>
+
+        <button type="submit" name="create" class="btn-create">
+            <i class="fas fa-plus"></i> Create Lobby
+        </button>
+
+    </form>
+
+    <div class="back-link">
+        <a href="join_lobby.php">
+            <i class="fas fa-arrow-left"></i> Back to Lobby List
+        </a>
+    </div>
+
+</div>
+
 </body>
 </html>

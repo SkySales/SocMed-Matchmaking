@@ -1,14 +1,14 @@
 <?php
 
-$user = '843581747c398000b4c429ba1f8d';
+$user = 'root';
 
-$password = '069f8435-8174-7d2a-8000-c2a0100ca8e8';
+$password = '';
 
 $db = 'EventsWave';
 
-$host = 'db.fr-pari1.bengt.wasmernet.com';
+$host = 'localhost';
 
-$port = 10272;
+$port = 3306;
 
 $conn = mysqli_connect($host, $user, $password, $db,$port) ;
 
