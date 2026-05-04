@@ -365,10 +365,6 @@ $tags_result = $tags_stmt->get_result();
                 <i class="fas fa-video"></i>
             </a>
 
-            <a href="Event-Calander/index.php" class="nav-link">
-                <i class="fas fa-calendar-alt"></i>
-            </a>
-
             <a href="my_Profile.php" class="nav-link profile">
                 <i class="fas fa-user-circle"></i>
             </a>

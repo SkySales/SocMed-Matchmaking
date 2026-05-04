@@ -436,7 +436,7 @@ if($user['is_tagged'] == 0){
     </style>
 </head>
 
-<body>
+<body> 
 
 <!-- Modern Navigation Bar -->
 <?php include('navbar.php'); ?>

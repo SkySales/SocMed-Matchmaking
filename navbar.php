@@ -523,14 +523,6 @@
                     </a>
                 </li>
 
-                <!-- Calendar -->
-                <li class="nav-item">
-                    <a class="nav-link-icon" href="Event-Calander/index.php" title="Calendar">
-                        <i class="fas fa-calendar-alt"></i>
-                        <span class="nav-link-text d-lg-none">Calendar</span>
-                    </a>
-                </li>
-
                 <!-- Create Button (Desktop) -->
                 <li class="nav-item d-none d-lg-inline-block">
                     <button class="btn-create" data-bs-toggle="modal" data-bs-target="#createModal" title="Create Post">
