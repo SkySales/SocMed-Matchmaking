@@ -34,7 +34,7 @@ if($user['is_tagged'] == 0){
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <title>EventsWave</title>
+    <title>GetMatch</title>
 
     <link rel="icon" href="assets/images/event_accepted_50px.png" type="image/icon type">
 

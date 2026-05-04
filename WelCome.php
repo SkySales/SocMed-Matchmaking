@@ -13,7 +13,7 @@ session_start();
 
   <meta http-equiv="x-ua-compatible" content="ie=edge" />
 
-  <title>EventsWave</title>
+  <title>GetMatch</title>
 
   <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.15.2/css/all.css" />
 
@@ -55,8 +55,8 @@ session_start();
 
                       <p class="fw-normal">
 Your account has been successfully created, and login information has been provided to your SLTC email address. Please update your
-                          password and user name before using your EventsWave account.
-Please adhere to our community standards and report any difficulties encountered while using our platform to <a href="eventswave@sltc.ac.lk">eventswave@sltc.ac.lk.</a>
+                          password and user name before using your GetMatch account.
+Please adhere to our community standards and report any difficulties encountered while using our platform to <a href="GetMatch@sltc.ac.lk">GetMatch@sltc.ac.lk.</a>
                       </p>
                 <div class="pt-1 mb-4 mt-2">
 

@@ -19,7 +19,7 @@ if(!isset($_SESSION['id']))
 <head>
   <meta charset="UTF-8">
 
-  <title>EventsWave</title>
+  <title>GetMatch</title>
 
   <link rel="icon" href="assets/images/event_accepted_50px.png" type="image/icon type">
 

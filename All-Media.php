@@ -17,7 +17,7 @@ if(!isset($_SESSION['id']))
 
 <head>
 
-    <title>EventsWave</title>
+    <title>GetMatch</title>
 
     <meta charset="utf-8">
 

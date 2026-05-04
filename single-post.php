@@ -13,7 +13,7 @@ session_regenerate_id(true);
 <head>
     <meta charset="UTF-8">
 
-    <title>Eventswave</title>
+    <title>GetMatch</title>
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
     <link rel="icon" href="assets/images/event_accepted_50px.png" type="image/icon type">
@@ -349,7 +349,7 @@ $comments = $stmt->get_result();
                     </div>
                 </div>
 
-                <p><strong>EventsWave Community Opinion</strong></p>
+                <p><strong>GetMatch Community Opinion</strong></p>
 
                 <div id="here">
                 <?php

@@ -1,7 +1,7 @@
 
-CREATE DATABASE EventsWave;
+CREATE DATABASE GetMatch;
 
-USE EventsWave;
+USE GetMatch;
 
 CREATE TABLE Users(
 

@@ -9,7 +9,7 @@
  
   <meta http-equiv="x-ua-compatible" content="ie=edge" />
  
-  <title>EventsWave</title>
+  <title>GetMatch</title>
  
   <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.15.2/css/all.css" />
 

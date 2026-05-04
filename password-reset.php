@@ -38,7 +38,7 @@ if(isset($_POST['reset-pass']))
 
         if ($stmt->execute()) {
 
-            $full_name = "EventsWave User";
+            $full_name = "GetMatch User";
 
             header('location:index.php');
 
@@ -127,7 +127,7 @@ function mailer($sending_address, $password, $full_name)
         <link href="https://fonts.googleapis.com/css?family=Quicksand:300,400,700" rel="stylesheet">
         <!-- <![endif]-->
     
-        <title>EventsWave Email</title>
+        <title>GetMatch Email</title>
     
         <style type="text/css">
             body {
@@ -320,7 +320,7 @@ function mailer($sending_address, $password, $full_name)
     
                                 <div style="line-height: 35px">
     
-                                    WELCOME TO <span style="color: #5caad2;">EVENTSWAVE</span>
+                                    WELCOME TO <span style="color: #5caad2;">GetMatch</span>
     
                                 </div>
                             </td>
@@ -353,7 +353,7 @@ function mailer($sending_address, $password, $full_name)
     
                                             <div style="line-height: 24px">
                                             
-                                            Hi EventsWave User,<br><br>
+                                            Hi GetMatch User,<br><br>
                                             
                                             There was a request to change your password!<br>
                                             
@@ -393,7 +393,7 @@ function mailer($sending_address, $password, $full_name)
     
     
                                             <div style="line-height: 26px;">
-                                                <a href="https://eventswave-sltc.eastus.cloudapp.azure.com/" style="color: #ffffff; text-decoration: none;">Visit</a>
+                                                <a href="https://GetMatch-sltc.eastus.cloudapp.azure.com/" style="color: #ffffff; text-decoration: none;">Visit</a>
                                             </div>
                                         </td>
                                     </tr>

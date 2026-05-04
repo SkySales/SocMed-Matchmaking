@@ -15,11 +15,11 @@
 /*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
 
 
--- Dumping database structure for eventswave
-CREATE DATABASE IF NOT EXISTS `eventswave` /*!40100 DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci */;
-USE `eventswave`;
+-- Dumping database structure for GetMatch
+CREATE DATABASE IF NOT EXISTS `GetMatch` /*!40100 DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci */;
+USE `GetMatch`;
 
--- Dumping structure for table eventswave.admin
+-- Dumping structure for table GetMatch.admin
 CREATE TABLE IF NOT EXISTS `admin` (
   `Admin_ID` int(11) NOT NULL AUTO_INCREMENT,
   `User_Name` varchar(100) NOT NULL,
@@ -27,9 +27,9 @@ CREATE TABLE IF NOT EXISTS `admin` (
   PRIMARY KEY (`Admin_ID`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
--- Dumping data for table eventswave.admin: ~0 rows (approximately)
+-- Dumping data for table GetMatch.admin: ~0 rows (approximately)
 
--- Dumping structure for table eventswave.comments
+-- Dumping structure for table GetMatch.comments
 CREATE TABLE IF NOT EXISTS `comments` (
   `COMMENT_ID` int(11) NOT NULL AUTO_INCREMENT,
   `POST_ID` int(11) NOT NULL,
@@ -43,12 +43,12 @@ CREATE TABLE IF NOT EXISTS `comments` (
   CONSTRAINT `comments_ibfk_2` FOREIGN KEY (`USER_ID`) REFERENCES `users` (`User_ID`)
 ) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
--- Dumping data for table eventswave.comments: ~0 rows (approximately)
+-- Dumping data for table GetMatch.comments: ~0 rows (approximately)
 INSERT INTO `comments` (`COMMENT_ID`, `POST_ID`, `USER_ID`, `COMMENT`, `DATE`) VALUES
 	(1, 2, 7, 'wag nlng pala', '2026-04-15 14:45:20'),
 	(2, 99, 18, 'asdasd', '2026-04-20 05:18:23');
 
--- Dumping structure for table eventswave.comments_events
+-- Dumping structure for table GetMatch.comments_events
 CREATE TABLE IF NOT EXISTS `comments_events` (
   `COMMENT_ID` int(11) NOT NULL AUTO_INCREMENT,
   `Event_ID` int(11) NOT NULL,
@@ -62,11 +62,11 @@ CREATE TABLE IF NOT EXISTS `comments_events` (
   CONSTRAINT `comments_events_ibfk_2` FOREIGN KEY (`USER_ID`) REFERENCES `users` (`User_ID`)
 ) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
--- Dumping data for table eventswave.comments_events: ~0 rows (approximately)
+-- Dumping data for table GetMatch.comments_events: ~0 rows (approximately)
 INSERT INTO `comments_events` (`COMMENT_ID`, `Event_ID`, `USER_ID`, `COMMENT`, `DATE`) VALUES
 	(1, 2, 7, '', '2026-04-16 06:17:29');
 
--- Dumping structure for table eventswave.comments_vid
+-- Dumping structure for table GetMatch.comments_vid
 CREATE TABLE IF NOT EXISTS `comments_vid` (
   `COMMENT_ID` int(11) NOT NULL AUTO_INCREMENT,
   `VIDEO_ID` int(11) NOT NULL,
@@ -80,9 +80,9 @@ CREATE TABLE IF NOT EXISTS `comments_vid` (
   CONSTRAINT `comments_vid_ibfk_2` FOREIGN KEY (`USER_ID`) REFERENCES `users` (`User_ID`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
--- Dumping data for table eventswave.comments_vid: ~0 rows (approximately)
+-- Dumping data for table GetMatch.comments_vid: ~0 rows (approximately)
 
--- Dumping structure for table eventswave.events
+-- Dumping structure for table GetMatch.events
 CREATE TABLE IF NOT EXISTS `events` (
   `Event_ID` int(11) NOT NULL AUTO_INCREMENT,
   `User_ID` int(11) NOT NULL,
@@ -99,13 +99,13 @@ CREATE TABLE IF NOT EXISTS `events` (
   CONSTRAINT `events_ibfk_1` FOREIGN KEY (`User_ID`) REFERENCES `users` (`User_ID`)
 ) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
--- Dumping data for table eventswave.events: ~2 rows (approximately)
+-- Dumping data for table GetMatch.events: ~2 rows (approximately)
 INSERT INTO `events` (`Event_ID`, `User_ID`, `Likes`, `Event_Poster`, `Caption`, `Event_Time`, `Event_Date`, `Invite_Link`, `HashTags`, `Date_Upload`) VALUES
 	(1, 7, 0, 'File_202604151263943.jfif', 'Test', '08:42:00', '2026-04-16 00:00:00', 'https://chatgpt.com/c/69db0f63-e2a0-8321-9164-7f306039afa5', '#wow', '2026-04-15 14:40:42'),
 	(2, 7, 0, 'File_202604159789233.png', 'ML 5man', '08:47:00', '2026-04-17 00:00:00', 'https://chatgpt.com/c/69db0f63-e2a0-8321-9164-7f306039afa5', '#wow #Legit', '2026-04-15 14:44:45'),
 	(3, 17, 0, 'File_202604228106396.', 'sadasdasd', '09:36:00', '2026-04-16 00:00:00', 'https://chatgpt.com/c/69db0f63-e2a0-8321-9164-7f306039afa5', '#wow #Legit', '2026-04-22 03:33:27');
 
--- Dumping structure for table eventswave.fallowing
+-- Dumping structure for table GetMatch.fallowing
 CREATE TABLE IF NOT EXISTS `fallowing` (
   `ID` int(11) NOT NULL AUTO_INCREMENT,
   `User_Id` int(11) NOT NULL,
@@ -113,7 +113,7 @@ CREATE TABLE IF NOT EXISTS `fallowing` (
   PRIMARY KEY (`ID`)
 ) ENGINE=InnoDB AUTO_INCREMENT=59 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
--- Dumping data for table eventswave.fallowing: ~18 rows (approximately)
+-- Dumping data for table GetMatch.fallowing: ~18 rows (approximately)
 INSERT INTO `fallowing` (`ID`, `User_Id`, `Other_user_id`) VALUES
 	(1, 7, 7),
 	(7, 8, 7),
@@ -134,7 +134,7 @@ INSERT INTO `fallowing` (`ID`, `User_Id`, `Other_user_id`) VALUES
 	(57, 17, 18),
 	(58, 17, 7);
 
--- Dumping structure for table eventswave.likes
+-- Dumping structure for table GetMatch.likes
 CREATE TABLE IF NOT EXISTS `likes` (
   `Like_ID` int(11) NOT NULL AUTO_INCREMENT,
   `Post_ID` int(11) NOT NULL,
@@ -146,12 +146,12 @@ CREATE TABLE IF NOT EXISTS `likes` (
   CONSTRAINT `likes_ibfk_2` FOREIGN KEY (`User_ID`) REFERENCES `users` (`User_ID`)
 ) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
--- Dumping data for table eventswave.likes: ~0 rows (approximately)
+-- Dumping data for table GetMatch.likes: ~0 rows (approximately)
 INSERT INTO `likes` (`Like_ID`, `Post_ID`, `User_ID`) VALUES
 	(1, 2, 7),
 	(2, 99, 18);
 
--- Dumping structure for table eventswave.likes_events
+-- Dumping structure for table GetMatch.likes_events
 CREATE TABLE IF NOT EXISTS `likes_events` (
   `Like_ID` int(11) NOT NULL AUTO_INCREMENT,
   `Event_ID` int(11) NOT NULL,
@@ -163,9 +163,9 @@ CREATE TABLE IF NOT EXISTS `likes_events` (
   CONSTRAINT `likes_events_ibfk_2` FOREIGN KEY (`User_ID`) REFERENCES `users` (`User_ID`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
--- Dumping data for table eventswave.likes_events: ~0 rows (approximately)
+-- Dumping data for table GetMatch.likes_events: ~0 rows (approximately)
 
--- Dumping structure for table eventswave.likes_vid
+-- Dumping structure for table GetMatch.likes_vid
 CREATE TABLE IF NOT EXISTS `likes_vid` (
   `Like_ID` int(11) NOT NULL AUTO_INCREMENT,
   `Video_ID` int(11) NOT NULL,
@@ -177,9 +177,9 @@ CREATE TABLE IF NOT EXISTS `likes_vid` (
   CONSTRAINT `likes_vid_ibfk_2` FOREIGN KEY (`User_ID`) REFERENCES `users` (`User_ID`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
--- Dumping data for table eventswave.likes_vid: ~0 rows (approximately)
+-- Dumping data for table GetMatch.likes_vid: ~0 rows (approximately)
 
--- Dumping structure for table eventswave.lobbies
+-- Dumping structure for table GetMatch.lobbies
 CREATE TABLE IF NOT EXISTS `lobbies` (
   `Lobby_ID` int(11) NOT NULL AUTO_INCREMENT,
   `Lobby_Name` varchar(100) DEFAULT NULL,
@@ -190,9 +190,9 @@ CREATE TABLE IF NOT EXISTS `lobbies` (
   PRIMARY KEY (`Lobby_ID`)
 ) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
--- Dumping data for table eventswave.lobbies: ~0 rows (approximately)
+-- Dumping data for table GetMatch.lobbies: ~0 rows (approximately)
 
--- Dumping structure for table eventswave.lobby_members
+-- Dumping structure for table GetMatch.lobby_members
 CREATE TABLE IF NOT EXISTS `lobby_members` (
   `ID` int(11) NOT NULL AUTO_INCREMENT,
   `Lobby_ID` int(11) DEFAULT NULL,
@@ -201,9 +201,9 @@ CREATE TABLE IF NOT EXISTS `lobby_members` (
   PRIMARY KEY (`ID`)
 ) ENGINE=InnoDB AUTO_INCREMENT=14 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
--- Dumping data for table eventswave.lobby_members: ~0 rows (approximately)
+-- Dumping data for table GetMatch.lobby_members: ~0 rows (approximately)
 
--- Dumping structure for table eventswave.posts
+-- Dumping structure for table GetMatch.posts
 CREATE TABLE IF NOT EXISTS `posts` (
   `Post_ID` int(11) NOT NULL AUTO_INCREMENT,
   `User_ID` int(11) NOT NULL,
@@ -217,7 +217,7 @@ CREATE TABLE IF NOT EXISTS `posts` (
   CONSTRAINT `posts_ibfk_1` FOREIGN KEY (`User_ID`) REFERENCES `users` (`User_ID`)
 ) ENGINE=InnoDB AUTO_INCREMENT=101 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
--- Dumping data for table eventswave.posts: ~54 rows (approximately)
+-- Dumping data for table GetMatch.posts: ~54 rows (approximately)
 INSERT INTO `posts` (`Post_ID`, `User_ID`, `Likes`, `Img_Path`, `Caption`, `HashTags`, `Date_Upload`) VALUES
 	(2, 7, 1, 'File_202604156451056.png', 'TARA LARO', '#wow #Legit', '2026-04-15 14:45:06'),
 	(3, 7, 0, 'File_202604168412272.png', 'valorant, dota', '#dota #valo', '2026-04-16 06:13:54'),
@@ -273,7 +273,7 @@ INSERT INTO `posts` (`Post_ID`, `User_ID`, `Likes`, `Img_Path`, `Caption`, `Hash
 	(98, 7, 0, 'File_202604155926062.jfif', 'Esports championship finals', '#gaming #esports', '2026-04-16 13:09:20'),
 	(99, 7, 1, 'File_202604155926062.jfif', 'Yoga outdoor session', '#yoga #health', '2026-04-16 13:09:20');
 
--- Dumping structure for table eventswave.special_events
+-- Dumping structure for table GetMatch.special_events
 CREATE TABLE IF NOT EXISTS `special_events` (
   `Event_ID` int(11) NOT NULL AUTO_INCREMENT,
   `Caption` varchar(250) NOT NULL,
@@ -284,9 +284,9 @@ CREATE TABLE IF NOT EXISTS `special_events` (
   PRIMARY KEY (`Event_ID`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
--- Dumping data for table eventswave.special_events: ~0 rows (approximately)
+-- Dumping data for table GetMatch.special_events: ~0 rows (approximately)
 
--- Dumping structure for table eventswave.tags
+-- Dumping structure for table GetMatch.tags
 CREATE TABLE IF NOT EXISTS `tags` (
   `Tag_ID` int(11) NOT NULL AUTO_INCREMENT,
   `Tag_Name` varchar(50) DEFAULT NULL,
@@ -294,7 +294,7 @@ CREATE TABLE IF NOT EXISTS `tags` (
   UNIQUE KEY `Tag_Name` (`Tag_Name`)
 ) ENGINE=InnoDB AUTO_INCREMENT=11 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
--- Dumping data for table eventswave.tags: ~10 rows (approximately)
+-- Dumping data for table GetMatch.tags: ~10 rows (approximately)
 INSERT INTO `tags` (`Tag_ID`, `Tag_Name`) VALUES
 	(5, 'Basketball'),
 	(4, 'Call of Duty'),
@@ -307,7 +307,7 @@ INSERT INTO `tags` (`Tag_ID`, `Tag_Name`) VALUES
 	(10, 'Streaming'),
 	(2, 'Valorant');
 
--- Dumping structure for table eventswave.users
+-- Dumping structure for table GetMatch.users
 CREATE TABLE IF NOT EXISTS `users` (
   `User_ID` int(11) NOT NULL AUTO_INCREMENT,
   `FULL_NAME` varchar(100) NOT NULL,
@@ -326,7 +326,7 @@ CREATE TABLE IF NOT EXISTS `users` (
   PRIMARY KEY (`User_ID`)
 ) ENGINE=InnoDB AUTO_INCREMENT=24 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
--- Dumping data for table eventswave.users: ~8 rows (approximately)
+-- Dumping data for table GetMatch.users: ~8 rows (approximately)
 INSERT INTO `users` (`User_ID`, `FULL_NAME`, `USER_NAME`, `USER_TYPE`, `PASSWORD_S`, `EMAIL`, `IMAGE`, `FACEBOOK`, `WHATSAPP`, `BIO`, `FALLOWERS`, `FALLOWING`, `POSTS`, `is_tagged`) VALUES
 	(7, 'Marc Amaba Avendano', 'Marcoooooo21', '1', '$2y$10$Wu8kG4OcQPDI4ToQ7mt4VuyZPHFxA4oRBlWjvXRNa0mD3glSDJyDy', 'skysales0321@gmail.com', 'Profile_202604123018193.png', 'hnfgnfghjdrh', 'sdgdhdfg', '213123123', 7, 5, 10, 1),
 	(17, 'mabs3271', 'user_7363', '1', '$2y$10$fDk14y2NJbwLTGAFqQHvDObaTLZngKXy/2iOEmhzbLG.W782xm3IG', 'mabs3271@gmail.com', 'default.png', 'www.facebook.com', 'www.webwhatsapp.com', '0', 1, 5, 0, 1),
@@ -337,7 +337,7 @@ INSERT INTO `users` (`User_ID`, `FULL_NAME`, `USER_NAME`, `USER_TYPE`, `PASSWORD
 	(22, 'skysales4321', 'user_8693', '1', '$2y$10$gK0ynomuD9op212Md.hBweHjgzDbtZa99uY.1iFaJWXdVPfvmFj.G', 'skysales4321@gmail.com', 'default.png', 'www.facebook.com', 'www.webwhatsapp.com', '0', 1, 0, 0, 1),
 	(23, 'skysales5321', 'user_3060', '1', '$2y$10$bIQ4ZINneq5N/Lu5lIZRWOUjAf3tdu7hVhmc5123DeZNpwO9lC/6u', 'skysales5321@gmail.com', 'default.png', 'www.facebook.com', 'www.webwhatsapp.com', '0', 1, 1, 0, 1);
 
--- Dumping structure for table eventswave.user_tags
+-- Dumping structure for table GetMatch.user_tags
 CREATE TABLE IF NOT EXISTS `user_tags` (
   `ID` int(11) NOT NULL AUTO_INCREMENT,
   `User_ID` int(11) DEFAULT NULL,
@@ -349,7 +349,7 @@ CREATE TABLE IF NOT EXISTS `user_tags` (
   CONSTRAINT `user_tags_ibfk_2` FOREIGN KEY (`Tag_ID`) REFERENCES `tags` (`Tag_ID`)
 ) ENGINE=InnoDB AUTO_INCREMENT=45 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
--- Dumping data for table eventswave.user_tags: ~30 rows (approximately)
+-- Dumping data for table GetMatch.user_tags: ~30 rows (approximately)
 INSERT INTO `user_tags` (`ID`, `User_ID`, `Tag_ID`) VALUES
 	(9, 7, 5),
 	(10, 7, 7),
@@ -382,7 +382,7 @@ INSERT INTO `user_tags` (`ID`, `User_ID`, `Tag_ID`) VALUES
 	(43, 23, 6),
 	(44, 23, 2);
 
--- Dumping structure for table eventswave.videos
+-- Dumping structure for table GetMatch.videos
 CREATE TABLE IF NOT EXISTS `videos` (
   `Video_ID` int(11) NOT NULL AUTO_INCREMENT,
   `User_ID` int(11) NOT NULL,
@@ -397,7 +397,7 @@ CREATE TABLE IF NOT EXISTS `videos` (
   CONSTRAINT `videos_ibfk_1` FOREIGN KEY (`User_ID`) REFERENCES `users` (`User_ID`)
 ) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
--- Dumping data for table eventswave.videos: ~0 rows (approximately)
+-- Dumping data for table GetMatch.videos: ~0 rows (approximately)
 INSERT INTO `videos` (`Video_ID`, `User_ID`, `Likes`, `Video_Path`, `Caption`, `HashTags`, `Date_Upload`, `Thumbnail_Path`) VALUES
 	(1, 7, 0, 'Vid_202604172388404.mp4', 'Test Vid shorts', '#wow #Legit #test', '2026-04-17 00:00:00', 'Thumb_202604172388404.png');
 
