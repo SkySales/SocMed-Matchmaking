@@ -38,362 +38,300 @@ $tags_result = $tags_stmt->get_result();
 
     <style>
         :root {
-            --primary: #3b82f6;
-            --primary-dark: #2563eb;
-            --secondary: #8b5cf6;
-            --accent: #ec4899;
-            --bg-light: #f8fafc;
-            --bg-white: #ffffff;
-            --text-dark: #0f172a;
-            --text-light: #64748b;
-            --border: #e2e8f0;
-            --shadow: 0 4px 6px -1px rgba(0,0,0,.1);
-            --shadow-lg: 0 20px 25px -5px rgba(0,0,0,.1);
+        --primary: #b30f0f;
+        --primary-dark: #220d0d;
+        --secondary: #791b1b;
+        --bg-light: #f1f5f9;
+        --bg-white: #ffffff;
+        --text-dark: #0f172a;
+        --text-light: #64748b;
+        --border: #e2e8f0;
         }
 
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-
-        html { scroll-behavior: smooth; }
-
+        /* GLOBAL */
         body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
-            background: linear-gradient(135deg, var(--bg-light) 0%, #f1f5f9 100%);
-            color: var(--text-dark);
-            line-height: 1.6;
-            padding-top: 0px;
-            padding-bottom: 70px;
-            min-height: 100vh;
+        font-family: 'Segoe UI', Roboto, sans-serif;
+        background: linear-gradient(135deg, #eef2ff 0%, #f8fafc 100%);
         }
 
+        /* NAVBAR FIX */
+        .navbar {
+        position: sticky;
+        top: 0;
+        z-index: 1000;
+        background: white;
+        border-bottom: 1px solid var(--border);
+        box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+        }
+
+        .nav-wrapper {
+        max-width: 1200px;
+        margin: auto;
+        padding: 12px 20px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        }
+
+        .brand-img {
+        height: 38px;
+        }
+
+        .nav-items {
+        display: flex;
+        gap: 20px;
+        align-items: center;
+        }
+
+        .nav-items a,
+        .nav-items i {
+        color: #334155;
+        transition: 0.2s;
+        cursor: pointer;
+        }
+
+        .nav-items i:hover,
+        .nav-items a:hover {
+        color: var(--primary);
+        transform: scale(1.1);
+        }
+
+        /* CONTAINER */
         .container-custom {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 2rem;
+        max-width: 1100px;
+        margin: auto;
+        padding: 2rem 1rem;
         }
 
-        /* ── Profile Header ── */
+        /* PROFILE HEADER */
         .profile-header {
-            background: var(--bg-white);
-            border-radius: 20px;
-            box-shadow: var(--shadow-lg);
-            overflow: hidden;
-            margin-bottom: 2rem;
-            border: 1px solid var(--border);
+        background: rgba(255,255,255,0.9);
+        backdrop-filter: blur(10px);
+        border-radius: 18px;
+        overflow: hidden;
+        border: 1px solid var(--border);
+        box-shadow: 0 15px 40px rgba(0,0,0,0.08);
         }
 
         .header-cover {
-            height: 200px;
-            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
-            background-size: cover;
-            background-position: center;
+        height: 180px;
+        background: linear-gradient(135deg, #941f1f, #000000);
         }
 
-        .profile-content { padding: 0 2rem 2rem; }
-
-        /*
-         * FIX: replaced CSS Grid with Flexbox so the avatar, info, and buttons
-         * wrap naturally on narrow screens without the columns collapsing into
-         * each other. align-items: flex-end keeps everything bottom-aligned
-         * against the cover image pull-up.
-         */
+        /* PROFILE TOP */
         .profile-top {
-            display: flex;
-            align-items: flex-end;
-            gap: 1.5rem;
-            margin-top: -56px; /* pulls content up over the cover */
-            position: relative;
-            z-index: 10;
-            flex-wrap: wrap;
+        display: flex;
+        align-items: flex-end;
+        gap: 20px;
+        margin-top: -60px;
+        padding: 0 25px;
+        flex-wrap: wrap;
         }
 
-        /* Avatar */
-        .profile-avatar { flex-shrink: 0; }
-
+        /* AVATAR */
         .avatar-img {
-            width: 130px;
-            height: 130px;
-            border-radius: 50%;
-            object-fit: cover;
-            border: 5px solid var(--bg-white);
-            box-shadow: var(--shadow-lg);
-            display: block;
-            transition: transform .3s ease;
+        width: 120px;
+        height: 120px;
+        border-radius: 50%;
+        border: 4px solid white;
+        object-fit: cover;
         }
 
-        .avatar-img:hover { transform: scale(1.05); }
-
-        /*
-         * FIX: added padding-top so name/handle text isn't hidden behind
-         * the avatar when the row wraps on small screens.
-         */
+        /* INFO */
         .profile-info {
-            flex: 1;
-            min-width: 0; /* prevents text overflow pushing layout */
-            padding-top: 60px;
+        flex: 1;
         }
 
         .profile-info h1 {
-            font-size: 1.75rem;
-            font-weight: 700;
-            margin-bottom: 0.2rem;
-            letter-spacing: -.5px;
-            /* FIX: truncate long usernames instead of breaking layout */
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
+        font-size: 1.6rem;
+        font-weight: 700;
         }
 
-        .profile-info .handle {
-            color: var(--text-light);
-            font-size: 1rem;
-            font-weight: 500;
+        .handle {
+        color: var(--text-light);
         }
 
-        /*
-         * FIX: action buttons pushed to the right with margin-left:auto and
-         * aligned to flex-end so they sit at the bottom of the header row
-         * without fighting the stats section.
-         */
+        /* BUTTONS */
         .action-buttons {
-            margin-left: auto;
-            padding-top: 60px;
-            display: flex;
-            gap: 0.75rem;
-            flex-wrap: wrap;
-            align-items: flex-end;
+        margin-left: auto;
+        display: flex;
+        gap: 10px;
         }
 
-        /* Stats ── moved BELOW the flex row so it always spans full width */
-        .profile-stats {
-            display: flex;
-            gap: 0;
-            margin-top: 1.25rem;
-            padding-top: 1.25rem;
-            border-top: 1px solid var(--border);
-        }
-
-        .stat-item {
-            flex: 1;
-            text-align: center;
-            padding: 0.5rem 0;
-        }
-
-        /* dividers between stats */
-        .stat-item + .stat-item { border-left: 1px solid var(--border); }
-
-        .stat-count {
-            font-size: 1.4rem;
-            font-weight: 700;
-            color: var(--primary);
-            display: block;
-        }
-
-        .stat-label {
-            font-size: 0.75rem;
-            color: var(--text-light);
-            text-transform: uppercase;
-            letter-spacing: .5px;
-        }
-
-        /* Buttons */
         .btn-custom {
-            padding: .65rem 1.25rem;
-            border: none;
-            border-radius: 8px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all .25s ease;
-            font-size: .9rem;
-            display: inline-flex;
-            align-items: center;
-            gap: .45rem;
+        border-radius: 8px;
+        padding: 8px 14px;
+        font-weight: 600;
+        border: none;
         }
 
         .btn-primary-custom {
-            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
-            color: white;
-            box-shadow: 0 4px 12px rgba(59,130,246,.3);
-        }
-
-        .btn-primary-custom:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 20px rgba(59,130,246,.4);
+        background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+        color: white;
         }
 
         .btn-secondary-custom {
-            background: var(--bg-light);
-            color: var(--primary);
-            border: 1.5px solid var(--primary);
+        background: #f1f5f9;
+        color: var(--primary);
         }
 
-        .btn-secondary-custom:hover {
-            background: var(--primary);
-            color: white;
-            transform: translateY(-2px);
+        /* STATS */
+        .profile-stats {
+        display: flex;
+        text-align: center;
+        border-top: 1px solid var(--border);
+        margin-top: 20px;
         }
 
-        /* Section cards */
+        .stat-item {
+        flex: 1;
+        padding: 12px;
+        }
+
+        .stat-count {
+        font-weight: bold;
+        color: var(--primary);
+        }
+
+        /* CARDS */
         .section-card {
-            background: var(--bg-white);
-            border-radius: 16px;
-            padding: 1.75rem;
-            margin-bottom: 1.5rem;
-            box-shadow: var(--shadow-lg);
-            border: 1px solid var(--border);
-            transition: box-shadow .3s ease;
+        background: white;
+        border-radius: 14px;
+        padding: 20px;
+        margin-top: 20px;
+        border: 1px solid var(--border);
+        box-shadow: 0 8px 25px rgba(0,0,0,0.05);
         }
-
-        .section-card:hover { box-shadow: 0 25px 30px -5px rgba(0,0,0,.12); }
 
         .section-title {
-            font-size: 1.15rem;
-            font-weight: 700;
-            margin-bottom: 1.25rem;
-            display: flex;
-            align-items: center;
-            gap: .6rem;
-            padding-bottom: .85rem;
-            border-bottom: 2px solid var(--primary);
-            color: var(--text-dark);
+        font-weight: 700;
+        margin-bottom: 12px;
+        border-bottom: 2px solid var(--primary);
+        padding-bottom: 5px;
         }
 
-        .section-title i { color: var(--primary); font-size: 1.2rem; }
-
-        .bio-text {
-            color: var(--text-light);
-            line-height: 1.8;
-            font-size: .98rem;
-            word-break: break-word;
-        }
-
-        /* Tags */
-        .tags-container { display: flex; flex-wrap: wrap; gap: .6rem; }
-
+        /* TAGS */
         .tag-badge {
-            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
-            color: white;
-            padding: .4rem .9rem;
-            border-radius: 20px;
-            font-size: .82rem;
-            font-weight: 600;
-            display: inline-flex;
-            align-items: center;
-            gap: .4rem;
-            transition: transform .25s ease, box-shadow .25s ease;
-            box-shadow: 0 2px 8px rgba(59,130,246,.2);
+        background: linear-gradient(135deg, #af1616, #6e0d0d);
+        color: white;
+        padding: 6px 12px;
+        border-radius: 20px;
+        font-size: 0.8rem;
+        margin: 4px;
+        display: inline-block;
         }
 
-        .tag-badge:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 6px 14px rgba(59,130,246,.3);
-        }
-
-        /* Social list */
-        .social-list { display: flex; flex-direction: column; gap: .75rem; }
-
-        .social-item {
-            display: flex;
-            align-items: center;
-            gap: .9rem;
-            padding: 1rem 1.1rem;
-            background: var(--bg-light);
-            border-radius: 10px;
-            border: 1px solid transparent;
-            transition: all .25s ease;
-        }
-
-        .social-item:hover {
-            background: white;
-            border-color: var(--border);
-            box-shadow: 0 4px 12px rgba(59,130,246,.08);
-            transform: translateX(3px);
-        }
-
-        .social-item i { font-size: 1.1rem; color: var(--primary); width: 26px; text-align: center; }
-
-        /* Posts grid */
+        /* POSTS */
         .posts-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
-            gap: 1rem;
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(140px,1fr));
+        gap: 10px;
         }
 
         .post-card {
-            position: relative;
-            overflow: hidden;
-            border-radius: 10px;
-            background: var(--bg-light);
-            aspect-ratio: 1;
-            cursor: pointer;
-            transition: box-shadow .25s ease;
-            box-shadow: 0 2px 6px rgba(0,0,0,.08);
+        border-radius: 10px;
+        overflow: hidden;
         }
 
-        .post-card:hover { box-shadow: 0 8px 16px rgba(0,0,0,.14); }
+        .post-img {
+        width: 100%;
+        height: 140px;
+        object-fit: cover;
+        }
 
-        .post-img { width: 100%; height: 100%; object-fit: cover; transition: transform .3s ease; }
-        .post-card:hover .post-img { transform: scale(1.07); }
+        /* NAVBAR BASE */
+        .navbar-custom {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            background: #1a1a1a;
+            border-bottom: 2px solid #dc3545;
+            z-index: 999;
+            box-shadow: 0 4px 20px rgba(220, 53, 69, 0.15);
+        }
 
-        .post-overlay {
-            position: absolute;
-            inset: 0;
-            background: rgba(0,0,0,.45);
+        /* CONTAINER */
+        .nav-container {
+            max-width: 1200px;
+            margin: auto;
+            padding: 12px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        /* LOGO */
+        .logo {
+            font-size: 1.4rem;
+            font-weight: 700;
+            color: #dc3545;
+            cursor: pointer;
             display: flex;
             align-items: center;
-            justify-content: center;
-            opacity: 0;
-            transition: opacity .25s ease;
-            backdrop-filter: blur(2px);
+            gap: 6px;
+            letter-spacing: 0.5px;
         }
 
-        .post-card:hover .post-overlay { opacity: 1; }
-
-        .empty-state { text-align: center; padding: 2.5rem; color: var(--text-light); grid-column: 1 / -1; }
-        .empty-state i { font-size: 3rem; color: var(--primary); margin-bottom: .75rem; opacity: .3; display: block; }
-        .empty-state p { font-size: 1rem; font-weight: 500; }
-
-        /* ── Responsive ── */
-        @media (max-width: 640px) {
-            .container-custom { padding: 1rem; }
-
-            .header-cover { height: 130px; }
-
-            /*
-             * FIX: on mobile the whole profile-top stacks vertically and
-             * centres. Avatar sits in its own row, info + buttons below.
-             */
-            .profile-top {
-                flex-direction: column;
-                align-items: center;
-                text-align: center;
-                margin-top: -50px;
-                gap: .75rem;
-            }
-
-            .profile-info { padding-top: 0; }
-            .profile-info h1 { font-size: 1.3rem; white-space: normal; }
-
-            .action-buttons {
-                margin-left: 0;
-                padding-top: 0;
-                justify-content: center;
-                width: 100%;
-            }
-
-            .btn-custom { flex: 1; justify-content: center; }
-
-            .avatar-img { width: 100px; height: 100px; }
-
-            .profile-stats { gap: 0; }
-
-            .posts-grid { grid-template-columns: repeat(2, 1fr); gap: .6rem; }
-
-            .section-card { padding: 1.25rem; }
+        .logo span {
+            color: #ffffff;
         }
 
-        @media (max-width: 380px) {
-            .stat-count { font-size: 1.1rem; }
-            .stat-label { font-size: .7rem; }
+        .logo:hover {
+            text-shadow: 0 0 10px rgba(220, 53, 69, 0.6);
+        }
+
+        /* MENU */
+        .nav-menu {
+            display: flex;
+            align-items: center;
+            gap: 18px;
+        }
+
+        /* LINKS */
+        .nav-link {
+            color: #d0d0d0;
+            font-size: 1.1rem;
+            padding: 8px 10px;
+            border-radius: 8px;
+            transition: all 0.25s ease;
+            position: relative;
+        }
+
+        /* HOVER EFFECT */
+        .nav-link:hover {
+            color: #ffffff;
+            background: rgba(220, 53, 69, 0.15);
+            transform: translateY(-2px);
+        }
+
+        /* ACTIVE LINK */
+        .nav-link.active {
+            color: #dc3545;
+        }
+
+        /* PROFILE ICON SPECIAL */
+        .nav-link.profile i {
+            font-size: 1.4rem;
+        }
+
+        /* MOBILE */
+        @media (max-width: 768px) {
+            .nav-container {
+                padding: 10px 15px;
+            }
+
+            .logo {
+                font-size: 1.2rem;
+            }
+
+            .nav-menu {
+                gap: 12px;
+            }
+
+            .nav-link {
+                font-size: 1rem;
+                padding: 6px;
+            }
         }
     </style>
 </head>
@@ -401,27 +339,43 @@ $tags_result = $tags_stmt->get_result();
 <body>
 
 <!-- NAVBAR -->
-  <nav class="navbar mobile-nav">
+<nav class="navbar-custom">
+    <div class="nav-container">
 
-      <div class="nav-wrapper">
-          <img src="assets/images/black_logo.png" class="brand-img" id="logo-img" style="cursor: pointer">
+        <!-- LOGO -->
+        <div class="logo" onclick="location.href='home.php'">
+            🎮 <span>GetMatch</span>
+        </div>
 
-          <div class="nav-items">
+        <!-- MENU -->
+        <div class="nav-menu">
+            <a href="home.php" class="nav-link active">
+                <i class="fas fa-home"></i>
+            </a>
 
-              <a href="home.php" style="text-decoration: none; color: #1c1f23"><i class="icon fas fa-home fa-lg"></i></a>
+            <a href="#" class="nav-link" data-bs-toggle="modal" data-bs-target="#search-model">
+                <i class="fas fa-search"></i>
+            </a>
 
-              <i class="icon fas fa-search fa-lg" data-bs-toggle="modal" data-bs-target="#search-model"></i>
-              <a href="Events.php" style="text-decoration: none; color: #1c1f23"><i class="icon fas fa-flag fa-lg"></i></a>
-              <a href="shorts.php" style="text-decoration: none; color: #1c1f23"><i class="icon fas fa-video fa-lg"></i></a>
-              <a href="Event-Calander/index.php" style="text-decoration: none; color: #1c1f23"><i class="icon fas fa-calendar-alt fa-lg"></i></a>
-              <div class="icon user-profile">
-                  <a href="my_Profile.php" ><i class="fas fa-user-circle fa-lg"></i></a>
-              </div>
+            <a href="Events.php" class="nav-link">
+                <i class="fas fa-flag"></i>
+            </a>
 
-          </div>
-      </div>
+            <a href="shorts.php" class="nav-link">
+                <i class="fas fa-video"></i>
+            </a>
 
-  </nav>
+            <a href="Event-Calander/index.php" class="nav-link">
+                <i class="fas fa-calendar-alt"></i>
+            </a>
+
+            <a href="my_Profile.php" class="nav-link profile">
+                <i class="fas fa-user-circle"></i>
+            </a>
+        </div>
+
+    </div>
+</nav>
 
 <div class="container-custom">
 

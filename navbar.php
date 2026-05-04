@@ -1,8 +1,8 @@
 <!-- Modern Bootstrap Navbar -->
 <style>
     :root {
-        --primary: #3b82f6;
-        --primary-dark: #2563eb;
+        --primary: #e72e2e;
+        --primary-dark: #0b152c;
         --secondary: #8b5cf6;
         --accent: #ec4899;
         --bg-light: #f8fafc;
@@ -473,7 +473,7 @@
     <div class="container-fluid">
         <!-- Brand/Logo -->
         <a class="navbar-brand" href="home.php">
-            <i class="fas fa-rocket"></i> BlurRat
+            <i class="fas fa-rocket"></i> GetMatch
         </a>
 
         <!-- Toggle Button (Mobile) -->

@@ -1,122 +1,249 @@
 <?php 
-
 session_start();
 
-if(isset($_SESSION['id']))
-{
+if(isset($_SESSION['id'])){
   header('location: index.php');
-
   exit;
 }
-
 ?>
 
 <!DOCTYPE html>
-
 <html lang="en">
-
 <head>
-  <meta charset="UTF-8" />
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GetMatch - Sign In</title>
 
-  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.15.2/css/all.css" />
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 
-  <meta http-equiv="x-ua-compatible" content="ie=edge" />
+<style>
+:root {
+    --primary: #dc3545;
+    --primary-dark: #a02834;
+    --bg-dark: #1a1a1a;
+    --card-dark: #262626;
+    --text-dark: #ffffff;
+    --text-light: #a1a1aa;
+    --border: #3f3f46;
+}
 
-  <title>EventsWave</title>
+/* GLOBAL */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
 
-  <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.15.2/css/all.css" />
+body {
+    font-family: 'Inter', sans-serif;
+    background: radial-gradient(circle at top, #2d2d2d, #121212);
+    min-height: 100vh;
+}
 
-  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700;900&display=swap" />
+/* WRAPPER */
+.login-wrapper {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+}
 
-  <link rel="stylesheet" href="assets/bootstrap/css/bootstrap-login-form.min.css" />
+/* CARD */
+.login-card {
+    display: flex;
+    max-width: 950px;
+    width: 100%;
+    border-radius: 18px;
+    overflow: hidden;
+    background: var(--card-dark);
+    box-shadow: 0 20px 60px rgba(220,53,69,0.2);
+    border: 1px solid rgba(220,53,69,0.3);
+}
 
+/* IMAGE */
+.login-image {
+    flex: 1;
+}
+
+.login-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+/* FORM */
+.login-form {
+    flex: 1;
+    padding: 40px;
+}
+
+/* HEADER */
+.brand {
+    font-size: 1.6rem;
+    font-weight: 700;
+    color: var(--primary);
+    margin-bottom: 10px;
+}
+
+.subtitle {
+    color: var(--text-light);
+    margin-bottom: 25px;
+    font-size: 0.95rem;
+}
+
+/* INPUT */
+.input-group {
+    position: relative;
+    margin-bottom: 18px;
+}
+
+.input-group i {
+    position: absolute;
+    left: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--text-light);
+}
+
+.input-group input {
+    width: 100%;
+    padding: 12px 12px 12px 38px;
+    border-radius: 8px;
+    border: 1px solid var(--border);
+    background: #111;
+    color: white;
+    font-size: 0.95rem;
+    transition: 0.3s;
+}
+
+.input-group input:focus {
+    border-color: var(--primary);
+    box-shadow: 0 0 0 2px rgba(220,53,69,0.2);
+    outline: none;
+}
+
+/* BUTTON */
+.btn-login {
+    width: 100%;
+    padding: 12px;
+    border-radius: 8px;
+    border: none;
+    background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+    color: white;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+    transition: 0.3s;
+    margin-top: 10px;
+}
+
+.btn-login:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 25px rgba(220,53,69,0.4);
+}
+
+/* ALERT */
+.alert {
+    padding: 10px;
+    border-radius: 6px;
+    margin-bottom: 15px;
+    font-size: 0.9rem;
+}
+
+.alert-danger {
+    background: #3d0f0f;
+    color: #ff6b6b;
+    border: 1px solid var(--primary);
+}
+
+/* LINKS */
+.form-footer {
+    margin-top: 15px;
+    font-size: 0.9rem;
+    color: var(--text-light);
+}
+
+.form-footer a {
+    color: var(--primary);
+    font-weight: 600;
+}
+
+.forgot {
+    display: block;
+    margin-top: 10px;
+    font-size: 0.85rem;
+    color: var(--text-light);
+}
+
+/* RESPONSIVE */
+@media(max-width: 768px){
+    .login-card {
+        flex-direction: column;
+    }
+
+    .login-image {
+        display: none;
+    }
+
+    .login-form {
+        padding: 25px;
+    }
+}
+</style>
 </head>
 
 <body>
-<!-- Start your project here-->
-<section class="vh-100" style="background-image: url('assets/images/login_request/cover.png');">
-  
-<div class="container py-5 h-100">
 
-    <div class="row d-flex justify-content-center align-items-center h-100">
+<div class="login-wrapper">
 
-      <div class="col col-xl-10">
+<div class="login-card">
 
-        <div class="card" style="border-radius: 1rem;">
+    <!-- IMAGE -->
+    <div class="login-image">
+        <img src="assets/images/login_request/main_img.jpg">
+    </div>
 
-          <div class="row g-0">
+    <!-- FORM -->
+    <div class="login-form">
 
-            <div class="col-md-6 col-lg-5 d-none d-md-block">
+        <div class="brand">GetMatch</div>
+        <div class="subtitle">Welcome back. Login to continue.</div>
 
-              <img
-                      src="assets/images/login_request/main_img.jpg"
-                      alt="login form"
-                      class="img-fluid" style="border-radius: 1rem 0 0 1rem;"
-              />
+        <form method="post" action="login_action.php">
 
+        <?php if(isset($_GET['error_message'])){ ?>
+            <div class="alert alert-danger">
+                <?php echo htmlspecialchars($_GET['error_message']); ?>
             </div>
+        <?php } ?>
 
-            <div class="col-md-6 col-lg-7 d-flex align-items-center">
-              
-              <div class="card-body p-4 p-lg-5 text-black">
-
-                <form method="post" action="login_action.php">
-
-                  <img src="assets/images/login_request/small_logo.png" height="40px" width="auto"> <br><br>
-
-                  <h5 class="fw-normal mb-3 pb-3" style="text-transform: uppercase; color: grey;"><b>Sign in with your sltc id</b></h5>
-
-                  
-                <?php if(isset($_GET['error_message'])){ ?>
-                  
-                  <p id="error_message" class="text-center alert-danger"><?php echo $_GET['error_message'];?></p>
-                  
-                <?php }?>
-
-                  <div class="form-outline mb-4">
-                    <input type="text" id="form2Example17" class="form-control form-control-lg" name="email" />
-                    <label class="form-label" for="form2Example17">Email address/User Name</label>
-                  </div>
-
-                  <div class="form-outline mb-4">
-                    <input type="password" id="form2Example27" class="form-control form-control-lg" name="password"/>
-                    <label class="form-label" for="form2Example27">Password</label>
-                  </div>
-
-                  <div class="pt-1 mb-4">
-                    <button class="btn btn-dark btn-lg btn-block" type="submit" name="button">Login</button>
-                  </div>
-
-                  <a class="small text-muted" href="Reset-Password.php">Forgot password?</a>
-
-                  <p class="mb-5 pb-lg-2" style="color: #19afd4;">Don't have an account? <a href="create-account.php" style="color: #2696ca;">Register here</a></p>
-
-                  <a href="#!" class="small text-muted">Terms of use.</a>
-
-                  <a href="#!" class="small text-muted">Privacy policy</a>
-
-                </form>
-
-              </div>
-
-            </div>
-
-          </div>
-
+        <div class="input-group">
+            <i class="fas fa-user"></i>
+            <input type="text" name="email" placeholder="Email or Username" required>
         </div>
 
-      </div>
+        <div class="input-group">
+            <i class="fas fa-lock"></i>
+            <input type="password" name="password" placeholder="Password" required>
+        </div>
+
+        <button class="btn-login" type="submit" name="button">
+            Login
+        </button>
+
+        <a href="Reset-Password.php" class="forgot">Forgot password?</a>
+
+        <div class="form-footer">
+            Don't have an account? <a href="create-account.php">Register</a>
+        </div>
+
+        </form>
 
     </div>
 
 </div>
-
-</section>
-
-<script type="text/javascript" src="assets/js/mdb.min.js"></script>
-
-<script type="text/javascript"></script>
+</div>
 
 </body>
-
 </html>

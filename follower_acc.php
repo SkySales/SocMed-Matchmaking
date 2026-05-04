@@ -300,7 +300,7 @@ else
 
                                     <li class="gallery-items-likes"><span class="hide-gallery-elements">Opinions</span>
 
-                                        <a href="single-post.php?post_id=<?php echo $post['Post_ID'];?>" target="_blank" style="color: white"><i class="icon fas fa-comment"></i></a>
+                                        <a href="single-post.php?post_id=<?php echo $post['Post_ID'];?>" target="_blank" style="color: #dc3545"><i class="icon fas fa-comment"></i></a>
 
                                     </li>
 

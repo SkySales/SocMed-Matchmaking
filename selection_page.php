@@ -9,7 +9,7 @@
 
   <meta http-equiv="x-ua-compatible" content="ie=edge" />
 
-  <title>EventsWave</title>
+  <title>GetMatch - Select Your Path</title>
 
   <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.15.2/css/all.css" />
 
@@ -17,11 +17,24 @@
 
   <link rel="stylesheet" href="assets/bootstrap/css/bootstrap-login-form.min.css" />
 
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%); min-height: 100vh; }
+    .card { border: 2px solid #dc3545; background: #2d2d2d; box-shadow: 0 10px 30px rgba(220, 53, 69, 0.15); border-radius: 12px; transition: all 0.3s ease; }
+    .card:hover { box-shadow: 0 20px 40px rgba(220, 53, 69, 0.25); }
+    .btn-dark { background: linear-gradient(135deg, #dc3545 0%, #a02834 100%); border: none; color: white; font-weight: 600; padding: 12px 24px; border-radius: 6px; transition: all 0.3s ease; box-shadow: 0 4px 12px rgba(220, 53, 69, 0.3); }
+    .btn-dark:hover { transform: translateY(-2px); box-shadow: 0 8px 20px rgba(220, 53, 69, 0.4); background: linear-gradient(135deg, #a02834 0%, #8b1e28 100%); }
+    h5 { color: #dc3545; font-weight: 700; }
+    a { color: #dc3545; text-decoration: none; font-weight: 600; }
+    a:hover { color: #e74c3c; }
+    .text-black { color: #ffffff !important; }
+  </style>
+
 </head>
 
 <body>
 <!-- Start your project here-->
-<section class="vh-100" style="background-image: url('assets/images/login_request/cover.png');">
+<section class="vh-100" style="background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);">
   
 <div class="container py-5 h-100">
 

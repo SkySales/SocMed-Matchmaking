@@ -9,6 +9,7 @@ ini_set('display_errors', 1);
 
 if(isset($_POST['signup_btn']))
 {
+    $user_namee = $_POST['username'];
     $email_address = $_POST['email'];
     $password_input = $_POST['password'];
     $confirm_password = $_POST['confirm_password'];
@@ -22,7 +23,7 @@ if(isset($_POST['signup_btn']))
 
     // Generate values
     $full_name = full_name($email_address);
-    $user_name = userName();
+    $user_name = $user_namee;
 
     $user_type = "1";
     $facebook = "www.facebook.com";
