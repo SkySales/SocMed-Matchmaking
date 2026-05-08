@@ -2,22 +2,41 @@
 session_start();
 include("../config.php");
 
-if(!isset($_GET['id']) || !is_numeric($_GET['id'])){
+if(!isset($_GET['id'])){
     header("location: join_lobby.php");
     exit;
 }
 
 $lobby_id = $_GET['id'];
 
-$stmt = $conn->prepare("SELECT * FROM lobbies WHERE Lobby_ID=?");
+$stmt = $conn->prepare("
+    SELECT * FROM lobbies 
+    WHERE Lobby_ID=?
+");
+
 $stmt->bind_param("i", $lobby_id);
 $stmt->execute();
+
 $lobby = $stmt->get_result()->fetch_assoc();
 
 if(!$lobby){
     header("location: join_lobby.php");
     exit;
 }
+
+// PLAYER COUNT
+$count_stmt = $conn->prepare("
+    SELECT COUNT(*) as total 
+    FROM lobby_members 
+    WHERE Lobby_ID=?
+");
+
+$count_stmt->bind_param("i", $lobby_id);
+$count_stmt->execute();
+
+$total_players = $count_stmt
+->get_result()
+->fetch_assoc()['total'];
 ?>
 
 <!DOCTYPE html>
@@ -25,129 +44,147 @@ if(!$lobby){
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title><?php echo htmlspecialchars($lobby['Lobby_Name']); ?> - Lobby</title>
 
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<title><?php echo htmlspecialchars($lobby['Lobby_Name']); ?></title>
+
+<link rel="stylesheet"
+href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
 <style>
-:root {
+
+:root{
     --primary:#dc3545;
-    --primary-dark:#a02834;
-    --bg:#1a1a1a;
-    --card:#2d2d2d;
-    --border:#444;
-    --text:#ffffff;
-    --muted:#b0b0b0;
+    --dark:#1a1a1a;
+    --card:#262626;
+    --border:#3a3a3a;
+    --text:#fff;
+    --muted:#aaa;
 }
 
-/* BASE */
-body{
-    font-family:'Segoe UI', sans-serif;
-    background:linear-gradient(135deg,#1a1a1a,#2d2d2d);
-    color:var(--text);
+*{
     margin:0;
-    padding:30px;
+    padding:0;
+    box-sizing:border-box;
+}
+
+body{
+    background:linear-gradient(135deg,#121212,#1f1f1f);
+    font-family:'Segoe UI',sans-serif;
+    color:white;
+    padding:25px;
 }
 
 /* HEADER */
+
 .header{
     display:flex;
     justify-content:space-between;
     align-items:center;
-    margin-bottom:25px;
+    margin-bottom:20px;
+    flex-wrap:wrap;
+    gap:15px;
 }
 
-.header h1{
-    font-size:26px;
+.logo{
+    font-size:28px;
     font-weight:700;
 }
 
+.logo span{
+    color:var(--primary);
+}
+
+.top-actions{
+    display:flex;
+    gap:10px;
+}
+
 .btn{
-    background:var(--primary);
     border:none;
-    color:white;
     padding:10px 18px;
     border-radius:8px;
-    cursor:pointer;
     font-weight:600;
+    cursor:pointer;
     transition:.3s;
+    color:white;
+    background:var(--primary);
 }
 
 .btn:hover{
-    background:var(--primary-dark);
     transform:translateY(-2px);
 }
 
 /* GRID */
+
 .grid{
     display:grid;
-    grid-template-columns: 320px 1fr;
+    grid-template-columns:320px 1fr;
     gap:20px;
 }
 
-/* CARD */
 .card{
     background:var(--card);
     border:1px solid var(--border);
     border-radius:12px;
     padding:20px;
-    box-shadow:0 10px 25px rgba(0,0,0,0.25);
-}
-
-/* SECTION TITLE */
-.title{
-    font-weight:700;
-    margin-bottom:15px;
-    font-size:16px;
-    border-bottom:2px solid var(--primary);
-    padding-bottom:8px;
 }
 
 /* INFO */
-.info-item{
+
+.section-title{
+    font-size:16px;
+    font-weight:700;
+    margin-bottom:15px;
+    border-left:4px solid var(--primary);
+    padding-left:10px;
+}
+
+.info{
+    margin-bottom:12px;
     display:flex;
     justify-content:space-between;
-    margin-bottom:10px;
+    color:#ddd;
     font-size:14px;
 }
 
-/* INVITE */
-.invite-box{
-    display:flex;
-    gap:10px;
-    margin-top:15px;
+.badge{
+    padding:5px 10px;
+    border-radius:20px;
+    font-size:12px;
+    font-weight:700;
 }
 
-.invite-box input{
-    flex:1;
-    padding:10px;
-    border-radius:6px;
-    border:none;
-    background:#111;
-    color:white;
+.waiting{
+    background:#ffc10722;
+    color:#ffc107;
+}
+
+.ingame{
+    background:#28a74522;
+    color:#28a745;
+}
+
+.full{
+    background:#dc354522;
+    color:#ff5d6c;
 }
 
 /* PLAYERS */
+
 .player{
+    background:#1a1a1a;
+    border:1px solid #333;
+    border-radius:10px;
+    padding:12px;
     display:flex;
     align-items:center;
     gap:12px;
-    padding:12px;
-    border-radius:10px;
-    background:#1a1a1a;
-    border:1px solid #333;
     margin-bottom:10px;
-    transition:.3s;
-}
-
-.player:hover{
-    border-color:var(--primary);
-    transform:translateX(3px);
 }
 
 .avatar{
-    width:40px;
-    height:40px;
+    width:42px;
+    height:42px;
     border-radius:50%;
     background:var(--primary);
     display:flex;
@@ -160,256 +197,342 @@ body{
     flex:1;
 }
 
-.status{
-    font-size:12px;
-    color:#4caf50;
-}
-
 .host{
     background:gold;
     color:black;
-    font-size:11px;
     padding:3px 8px;
-    border-radius:12px;
+    border-radius:20px;
+    font-size:11px;
+    font-weight:700;
 }
 
 .kick{
     background:#ff4d4d;
+    border:none;
+    color:white;
     padding:6px 10px;
     border-radius:6px;
-    font-size:12px;
+    cursor:pointer;
 }
 
-.empty{
-    text-align:center;
-    padding:30px;
-    color:var(--muted);
-}
-
-/* FOOTER BUTTONS */
-.actions{
-    margin-top:20px;
+.invite-box{
     display:flex;
     gap:10px;
+    margin-top:15px;
 }
 
-/* MOBILE RESPONSIVE */
+.invite-box input{
+    flex:1;
+    padding:10px;
+    border:none;
+    border-radius:6px;
+    background:#111;
+    color:white;
+}
+
+/* MOBILE */
+
 @media(max-width:768px){
+
     body{
         padding:15px;
-    }
-
-    .header{
-        flex-direction:column;
-        align-items:flex-start;
-        gap:15px;
-    }
-
-    .header h1{
-        font-size:20px;
     }
 
     .grid{
         grid-template-columns:1fr;
     }
 
-    .card{
-        padding:15px;
+    .header{
+        flex-direction:column;
+        align-items:flex-start;
     }
 
-    .title{
-        font-size:14px;
-    }
-
-    .info-item{
-        font-size:13px;
-    }
-
-    .player{
-        flex-wrap:wrap;
-        gap:8px;
-    }
-
-    .avatar{
-        width:35px;
-        height:35px;
-        font-size:14px;
-    }
-
-    .name{
-        flex:0 0 100%;
+    .top-actions{
+        width:100%;
     }
 
     .btn{
-        padding:8px 14px;
-        font-size:13px;
         flex:1;
     }
-
-    .invite-box{
-        flex-direction:column;
-    }
-
-    .invite-box input{
-        width:100%;
-    }
-
-    .invite-box button{
-        width:100%;
-    }
-
-    .actions{
-        flex-direction:column;
-    }
-
-    .actions button{
-        width:100%;
-    }
 }
+
 </style>
 </head>
 
 <body>
 
-<!-- HEADER -->
 <div class="header">
-    <h1><i class="fas fa-door-open"></i> <?php echo htmlspecialchars($lobby['Lobby_Name']); ?></h1>
-    <a href="join_lobby.php" class="btn"><i class="fas fa-arrow-left"></i> Back</a>
+
+    <div class="logo">
+        Get<span>Match</span>
+    </div>
+
+    <div class="top-actions">
+
+        <a href="join_lobby.php">
+            <button class="btn">
+                <i class="fas fa-arrow-left"></i>
+                Back
+            </button>
+        </a>
+
+        <button class="btn" onclick="leaveLobby()">
+            Leave
+        </button>
+
+        <?php if($_SESSION['id'] == $lobby['Host_ID']): ?>
+
+        <button
+        class="btn"
+        style="background:#ff4d4d;"
+        onclick="deleteLobby()">
+
+            Delete Lobby
+
+        </button>
+
+        <?php endif; ?>
+
+    </div>
+
 </div>
 
 <div class="grid">
 
-<!-- LEFT PANEL -->
+<!-- LEFT -->
+
 <div class="card">
 
-<div class="title">Lobby Info</div>
+    <div class="section-title">
+        Lobby Information
+    </div>
 
-<div class="info-item">
-    <span>Type</span>
-    <strong><?php echo $lobby['Is_Private'] ? 'Private 🔒' : 'Public 🔓'; ?></strong>
+    <div class="info">
+        <span>Name</span>
+        <strong><?php echo $lobby['Lobby_Name']; ?></strong>
+    </div>
+
+    <div class="info">
+        <span>Game</span>
+        <strong><?php echo $lobby['Game_Name']; ?></strong>
+    </div>
+
+    <div class="info">
+        <span>Players</span>
+        <strong>
+            <?php echo $total_players; ?>
+            /
+            <?php echo $lobby['Max_Players']; ?>
+        </strong>
+    </div>
+
+    <div class="info">
+        <span>Lobby</span>
+
+        <?php if($total_players >= $lobby['Max_Players']): ?>
+
+            <span class="badge full">
+                FULL
+            </span>
+
+        <?php else: ?>
+
+            <span style="color:#4caf50;">
+                OPEN
+            </span>
+
+        <?php endif; ?>
+    </div>
+
+    <div class="section-title" style="margin-top:25px;">
+        Invite Link
+    </div>
+
+    <div class="invite-box">
+
+        <input type="text"
+        id="invite"
+        readonly>
+
+        <button class="btn"
+        onclick="copyInvite()">
+
+            Copy
+
+        </button>
+
+    </div>
+
 </div>
 
-<?php if($lobby['Is_Private']): ?>
-<div class="info-item">
-    <span>PIN</span>
-    <strong><?php echo $lobby['Lobby_Code']; ?></strong>
-</div>
-<?php endif; ?>
+<!-- PLAYERS -->
 
-<div class="info-item">
-    <span>Created</span>
-    <strong><?php echo date("M d", strtotime($lobby['Created_At'] ?? "now")); ?></strong>
-</div>
-
-<!-- INVITE -->
-<div class="title" style="margin-top:20px;">Invite</div>
-
-<div class="invite-box">
-    <input type="text" id="link" readonly>
-    <button class="btn" onclick="copy()">Copy</button>
-</div>
-
-<div class="actions">
-    <button class="btn" onclick="leaveLobby()">
-        <i class="fas fa-sign-out-alt"></i> Leave
-    </button>
-
-    <?php if($_SESSION['id'] == $lobby['Host_ID']): ?>
-    <button class="btn" style="background:#ff4d4d" onclick="deleteLobby()">
-        Delete
-    </button>
-    <?php endif; ?>
-</div>
-
-</div>
-
-<!-- RIGHT PANEL -->
 <div class="card">
 
-<div class="title">
-    Players (<span id="count">0</span>)
-</div>
+    <div class="section-title">
+        Players
+        (<span id="count">0</span>)
+    </div>
 
-<div id="players"></div>
+    <div id="players"></div>
 
 </div>
 
 </div>
 
 <script>
-const LOBBY_ID = <?php echo $lobby_id ?>;
-const USER_ID = <?php echo $_SESSION['id'] ?>;
-const HOST_ID = <?php echo $lobby['Host_ID'] ?>;
 
-/* invite */
-document.getElementById("link").value =
-location.origin + "/lobby/join_lobby.php?lobby_id=" + LOBBY_ID;
+const LOBBY_ID =
+<?php echo $lobby_id; ?>;
 
-function copy(){
-    let i = document.getElementById("link");
-    i.select();
+const USER_ID =
+<?php echo $_SESSION['id']; ?>;
+
+const HOST_ID =
+<?php echo $lobby['Host_ID']; ?>;
+
+// INVITE
+document.getElementById("invite").value =
+location.origin +
+"/lobby/join_lobby.php?lobby_id=" +
+LOBBY_ID;
+
+function copyInvite(){
+
+    let copyText =
+    document.getElementById("invite");
+
+    copyText.select();
+
     document.execCommand("copy");
+
+    alert("Invite copied!");
 }
 
-/* players */
+// PLAYERS
 function loadPlayers(){
-fetch("fetch_players.php?lobby_id="+LOBBY_ID)
-.then(res=>res.json())
-.then(data=>{
-    let html="";
 
-    if(data.players.length===0){
-        html = `<div class="empty">No players yet</div>`;
-    }
+fetch(
+"fetch_players.php?lobby_id="+LOBBY_ID
+)
+
+.then(res=>res.json())
+
+.then(data=>{
+
+    let html = "";
 
     data.players.forEach(p=>{
-        let initial = p.USER_NAME.charAt(0).toUpperCase();
+
+        let initial =
+        p.USER_NAME.charAt(0).toUpperCase();
 
         html += `
         <div class="player">
-            <div class="avatar">${initial}</div>
 
-            <div class="name">
-                ${p.USER_NAME}
-                <div class="status">🟢 Online</div>
+            <div class="avatar">
+                ${initial}
             </div>
 
-            ${p.User_ID==HOST_ID ? '<span class="host">HOST</span>' : ''}
+            <div class="name">
 
-            ${USER_ID==HOST_ID && p.User_ID!=USER_ID ? 
-                `<button class="kick" onclick="kick(${p.User_ID})">Kick</button>`:''}
-        </div>`;
+                ${p.USER_NAME}
+
+                ${
+                    p.User_ID == HOST_ID
+                    ?
+                    `<span class="host">
+                        HOST
+                    </span>`
+                    :
+                    ''
+                }
+
+            </div>
+
+            ${
+                USER_ID == HOST_ID &&
+                p.User_ID != USER_ID
+                ?
+                `<button class="kick"
+                onclick="kick(${p.User_ID})">
+                    Kick
+                </button>`
+                :
+                ''
+            }
+
+        </div>
+        `;
     });
 
-    document.getElementById("players").innerHTML = html;
-    document.getElementById("count").innerText = data.players.length;
+    document.getElementById("players")
+    .innerHTML = html;
+
+    document.getElementById("count")
+    .innerText = data.players.length;
+
 });
+
 }
 
+// KICK
 function kick(id){
+
 fetch("kick_user.php",{
+
 method:"POST",
-headers:{"Content-Type":"application/x-www-form-urlencoded"},
-body:`lobby_id=${LOBBY_ID}&user_id=${id}`
+
+headers:{
+"Content-Type":
+"application/x-www-form-urlencoded"
+},
+
+body:
+`lobby_id=${LOBBY_ID}&user_id=${id}`
+
 }).then(()=>loadPlayers());
+
+}
+
+// LEAVE
+function leaveLobby(){
+
+window.location =
+"leave_lobby.php?id="+LOBBY_ID;
+
 }
 
 function deleteLobby(){
-if(confirm("Delete lobby?")){
-fetch("delete_lobby.php",{
-method:"POST",
-headers:{"Content-Type":"application/x-www-form-urlencoded"},
-body:`lobby_id=${LOBBY_ID}`
-}).then(()=>location="join_lobby.php");
-}
-}
 
-function leaveLobby(){
-window.location="leave_lobby.php?id="+LOBBY_ID;
+    if(confirm("Delete this lobby?")){
+
+        fetch("delete_lobby.php",{
+
+            method:"POST",
+
+            headers:{
+                "Content-Type":
+                "application/x-www-form-urlencoded"
+            },
+
+            body:`lobby_id=${LOBBY_ID}`
+
+        }).then(()=>{
+
+            window.location =
+            "join_lobby.php";
+
+        });
+
+    }
+
 }
 
 setInterval(loadPlayers,2000);
+
 loadPlayers();
+
 </script>
 
 </body>
