@@ -4,7 +4,7 @@ $user = 'root';
 
 $password = '';
 
-$db = 'socmatch';
+$db = 'eventswave';
 
 $host = 'localhost';
 

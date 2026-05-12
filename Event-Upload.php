@@ -25,6 +25,7 @@ if(!isset($_SESSION['id']))
     <link rel="icon" href="assets/images/event_accepted_50px.png" type="image/icon type">
 
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.rtl.min.css" integrity="sha384-+qdLaIRZfNu4cVPK/PxJJEy0B0f3Ugv8i482AKY7gwXwhaCroABd086ybrVKTa0q" crossorigin="anonymous">
 
@@ -52,33 +53,7 @@ if(!isset($_SESSION['id']))
 
 <body>
 
-<nav class="navbar">
-
-    <div class="nav-wrapper">
-
-        <img src="assets/images/black_logo.png" class="brand-img" id="logo-img">
-
-        <div class="nav-items">
-
-            <a href="home.php" style="text-decoration: none; color: #1c1f23"><i class="icon fas fa-home fa-lg"></i></a>
-
-            <a href="Events.php" style="text-decoration: none; color: #1c1f23"><i class="icon fas fa-flag fa-lg"></i></a>
-
-            <a href="shorts.php" style="text-decoration: none; color: #1c1f23"><i class="icon fas fa-video fa-lg"></i></a>
-
-            <i class="icon fas fa-calendar-alt fa-lg"></i>
-
-            <div class="icon user-profile">
-
-                <a href="my_Profile.php" ><i class="fas fa-user-circle fa-lg"></i></a>
-
-            </div>
-
-        </div>
-
-    </div>
-
-</nav>
+<?php include('navbar.php'); ?>
 
 <br><br><br>
 
