@@ -46,7 +46,7 @@ if(isset($_POST['signup_btn']))
 
     // check user availibility
 
-    $sql_query = "SELECT User_ID FROM USERS WHERE USER_NAME = '$user_name' OR EMAIL = '$email_address';";
+    $sql_query = "SELECT User_ID FROM users WHERE USER_NAME = '$user_name' OR EMAIL = '$email_address';";
 
     //echo $sql_query;
 

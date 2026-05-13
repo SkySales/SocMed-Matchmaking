@@ -43,6 +43,18 @@ $lobby_id
 
 $members->execute();
 
+$delete_messages = $conn->prepare("
+DELETE FROM lobby_messages
+WHERE Lobby_ID=?
+");
+
+$delete_messages->bind_param(
+"i",
+$lobby_id
+);
+
+$delete_messages->execute();
+
 // DELETE LOBBY
 $delete = $conn->prepare("
 DELETE FROM lobbies

@@ -97,6 +97,7 @@ body{
 .top-actions{
     display:flex;
     gap:10px;
+    flex-wrap:wrap;
 }
 
 .btn{
@@ -112,6 +113,10 @@ body{
 
 .btn:hover{
     transform:translateY(-2px);
+}
+
+.delete-btn{
+    background:#ff4d4d;
 }
 
 /* GRID */
@@ -215,6 +220,8 @@ body{
     cursor:pointer;
 }
 
+/* INVITE */
+
 .invite-box{
     display:flex;
     gap:10px;
@@ -227,6 +234,66 @@ body{
     border:none;
     border-radius:6px;
     background:#111;
+    color:white;
+}
+
+/* CHAT */
+
+.chat-box{
+    height:350px;
+    overflow-y:auto;
+    background:#111;
+    border-radius:10px;
+    padding:15px;
+    margin-bottom:15px;
+}
+
+.chat-message{
+    margin-bottom:12px;
+    display:flex;
+    flex-direction:column;
+}
+
+.chat-name{
+    font-size:12px;
+    color:#999;
+    margin-bottom:4px;
+}
+
+.chat-bubble{
+    max-width:70%;
+    padding:10px 14px;
+    border-radius:12px;
+    word-wrap:break-word;
+}
+
+.me{
+    align-items:flex-end;
+}
+
+.me .chat-bubble{
+    background:var(--primary);
+}
+
+.other{
+    align-items:flex-start;
+}
+
+.other .chat-bubble{
+    background:#2d2d2d;
+}
+
+.chat-form{
+    display:flex;
+    gap:10px;
+}
+
+.chat-form input{
+    flex:1;
+    padding:12px;
+    border:none;
+    border-radius:8px;
+    background:#1a1a1a;
     color:white;
 }
 
@@ -253,6 +320,14 @@ body{
 
     .btn{
         flex:1;
+    }
+
+    .invite-box{
+        flex-direction:column;
+    }
+
+    .chat-form{
+        flex-direction:column;
     }
 }
 
@@ -283,8 +358,7 @@ body{
         <?php if($_SESSION['id'] == $lobby['Host_ID']): ?>
 
         <button
-        class="btn"
-        style="background:#ff4d4d;"
+        class="btn delete-btn"
         onclick="deleteLobby()">
 
             Delete Lobby
@@ -317,6 +391,7 @@ body{
         <strong><?php echo $lobby['Game_Name']; ?></strong>
     </div>
 
+
     <div class="info">
         <span>Players</span>
         <strong>
@@ -344,6 +419,27 @@ body{
         <?php endif; ?>
     </div>
 
+    <?php if(
+        $lobby['Is_Private'] &&
+        $_SESSION['id'] == $lobby['Host_ID']
+        ): ?>
+
+        <div class="info">
+
+            <span>Lobby PIN</span>
+
+            <strong style="
+                color:#ffc107;
+                letter-spacing:2px;
+                font-size:18px;
+            ">
+                <?php echo $lobby['Lobby_Code']; ?>
+            </strong>
+
+        </div>
+
+    <?php endif; ?>
+
     <div class="section-title" style="margin-top:25px;">
         Invite Link
     </div>
@@ -365,6 +461,10 @@ body{
 
 </div>
 
+<!-- RIGHT -->
+
+<div>
+
 <!-- PLAYERS -->
 
 <div class="card">
@@ -375,6 +475,41 @@ body{
     </div>
 
     <div id="players"></div>
+
+</div>
+
+<!-- CHAT -->
+
+<div class="card" style="margin-top:20px;">
+
+    <div class="section-title">
+        Lobby Chat
+    </div>
+
+    <div class="chat-box" id="chat-box">
+
+        <div style="color:#777;text-align:center;">
+            Loading messages...
+        </div>
+
+    </div>
+
+    <form id="chatForm" class="chat-form">
+
+        <input
+        type="text"
+        id="message"
+        placeholder="Type message..."
+        autocomplete="off"
+        required>
+
+        <button class="btn">
+            Send
+        </button>
+
+    </form>
+
+</div>
 
 </div>
 
@@ -495,6 +630,24 @@ body:
 
 }
 
+// START MATCH
+function startMatch(){
+
+fetch("start_match.php",{
+
+method:"POST",
+
+headers:{
+"Content-Type":
+"application/x-www-form-urlencoded"
+},
+
+body:`lobby_id=${LOBBY_ID}`
+
+}).then(()=>location.reload());
+
+}
+
 // LEAVE
 function leaveLobby(){
 
@@ -503,6 +656,7 @@ window.location =
 
 }
 
+// DELETE
 function deleteLobby(){
 
     if(confirm("Delete this lobby?")){
@@ -529,9 +683,66 @@ function deleteLobby(){
 
 }
 
+// CHAT LOAD
+function loadMessages(){
+
+fetch("fetch_messages.php?lobby_id="+LOBBY_ID)
+
+.then(res=>res.text())
+
+.then(data=>{
+
+    let box =
+    document.getElementById("chat-box");
+
+    box.innerHTML = data;
+
+    box.scrollTop = box.scrollHeight;
+
+});
+
+}
+
+// SEND MESSAGE
+document
+.getElementById("chatForm")
+
+.addEventListener("submit",function(e){
+
+e.preventDefault();
+
+let msg =
+document.getElementById("message").value;
+
+fetch("send_message.php",{
+
+method:"POST",
+
+headers:{
+"Content-Type":
+"application/x-www-form-urlencoded"
+},
+
+body:
+`lobby_id=${LOBBY_ID}&message=${encodeURIComponent(msg)}`
+
+})
+
+.then(()=>{
+
+    document.getElementById("message").value="";
+
+    loadMessages();
+
+});
+
+});
+
 setInterval(loadPlayers,2000);
+setInterval(loadMessages,2000);
 
 loadPlayers();
+loadMessages();
 
 </script>
 

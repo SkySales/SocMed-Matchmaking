@@ -39,7 +39,7 @@ if(isset($_POST['target_id']))
 {
     $target_id = $_POST['target_id'];
 
-    $sql = "SELECT * FROM Users WHERE User_ID = $target_id;";
+    $sql = "SELECT * FROM users WHERE User_ID = $target_id;";
 
     $stmt = $conn->prepare($sql);
 

@@ -37,7 +37,7 @@ if(isset($_POST['posting']))
 
     $date = date("Y-m-d H:i:s");
 
-    $sql_query = "INSERT INTO Posts (User_ID, Likes, Img_Path, Caption, HashTags, Date_Upload) VALUES 
+    $sql_query = "INSERT INTO posts (User_ID, Likes, Img_Path, Caption, HashTags, Date_Upload) VALUES 
     ($ID, $likes, '$file_complete','$caption', '$hashtags','$date')";
 
     echo $sql_query;

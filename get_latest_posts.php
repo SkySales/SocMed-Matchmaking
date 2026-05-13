@@ -11,7 +11,7 @@ if(isset($_GET['page_no']) && $_GET['page_no'] != "")
     $page_no = 1;
 }
 
-$sql = "SELECT COUNT(*) as total_posts FROM Posts";
+$sql = "SELECT COUNT(*) as total_posts FROM posts";
 
 $stmt = $conn->prepare($sql);
 
@@ -31,7 +31,7 @@ $offest = ($page_no - 1) * $total_posts_per_page;
 
 $total_number_pages = ceil($total_posts/$total_posts_per_page);
 
-$stmt = $conn->prepare("SELECT * FROM Posts ORDER BY Post_ID DESC LIMIT $offest, $total_posts_per_page;");
+$stmt = $conn->prepare("SELECT * FROM posts ORDER BY Post_ID DESC LIMIT $offest, $total_posts_per_page;");
 
 $stmt->execute();
 

@@ -15,7 +15,7 @@ if(isset($_POST['button']))
     // ✅ Prepare query (SAFE)
     $stmt = $conn->prepare("SELECT 
         User_ID, FULL_NAME, USER_NAME, USER_TYPE, EMAIL, PASSWORD_S, IMAGE, FACEBOOK, WHATSAPP, BIO, FALLOWERS, FALLOWING, POSTS 
-        FROM USERS 
+        FROM users 
         WHERE USER_NAME = ? OR EMAIL = ?");
 
     $stmt->bind_param("ss", $email, $email);

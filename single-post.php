@@ -111,7 +111,7 @@ if(isset($_GET['post_id']))
 
     $post_identification = $_GET['post_id'];
 
-    $stmt = $conn->prepare("SELECT * FROM Posts WHERE Post_ID = $post_identification;");
+    $stmt = $conn->prepare("SELECT * FROM posts WHERE Post_ID = $post_identification;");
 
     $stmt->execute();
 

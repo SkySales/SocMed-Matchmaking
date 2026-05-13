@@ -10,7 +10,7 @@ if(isset($_POST['button']))
 
     $password = md5($_POST['password']);
 
-    $stmt = $conn->prepare("SELECT User_ID, FULL_NAME, USER_TYPE, EMAIL, IMAGE, FACEBOOK, WHATSAPP, BIO, FALLOWERS, FALLOWING, POSTS  FROM USERS WHERE USER_NAME = ? AND PASSWORD = ?");
+    $stmt = $conn->prepare("SELECT User_ID, FULL_NAME, USER_TYPE, EMAIL, IMAGE, FACEBOOK, WHATSAPP, BIO, FALLOWERS, FALLOWING, POSTS  FROM users WHERE USER_NAME = ? AND PASSWORD = ?");
 
     $stmt->bind_param("ss", $email, $password);
 

@@ -43,7 +43,7 @@ if(isset($_POST['signup_btn']))
     if(true)
     {
         // ✅ Check if email exists
-        $stmt = $conn->prepare("SELECT User_ID FROM USERS WHERE EMAIL = ?");
+        $stmt = $conn->prepare("SELECT User_ID FROM users WHERE EMAIL = ?");
         $stmt->bind_param("s", $email_address);
         $stmt->execute();
         $stmt->store_result();
@@ -58,7 +58,7 @@ if(isset($_POST['signup_btn']))
         $stmt->close(); // ✅ VERY IMPORTANT
 
         // ✅ Insert user
-        $stmt = $conn->prepare("INSERT INTO USERS 
+        $stmt = $conn->prepare("INSERT INTO users 
         (FULL_NAME, USER_NAME, USER_TYPE, PASSWORD_S, EMAIL, IMAGE, FACEBOOK, WHATSAPP, BIO, FALLOWERS, FALLOWING, POSTS) 
         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
 
