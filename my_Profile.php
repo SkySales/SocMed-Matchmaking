@@ -28,333 +28,432 @@ $tags_result = $tags_stmt->get_result();
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>My Profile - GetMatch</title>
-    <link rel="icon" href="assets/images/event_accepted_50px.png" type="image/icon type">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.1/jquery.min.js"></script>
-    <link rel="stylesheet" href="assets/css/style.css">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <style>
-        :root {
-        --primary: #b30f0f;
-        --primary-dark: #220d0d;
-        --secondary: #791b1b;
-        --bg-light: #f1f5f9;
-        --bg-white: #ffffff;
-        --text-dark: #0f172a;
-        --text-light: #64748b;
-        --border: #e2e8f0;
-        }
+<title>My Profile - GetMatch</title>
 
-        /* GLOBAL */
-        body {
-        font-family: 'Segoe UI', Roboto, sans-serif;
-        background: linear-gradient(135deg, #eef2ff 0%, #f8fafc 100%);
-        }
+<link rel="icon" href="assets/images/event_accepted_50px.png">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
-        /* NAVBAR FIX */
-        .navbar {
-        position: sticky;
-        top: 0;
-        z-index: 1000;
-        background: white;
-        border-bottom: 1px solid var(--border);
-        box-shadow: 0 4px 10px rgba(0,0,0,0.05);
-        }
+<style>
 
-        .nav-wrapper {
-        max-width: 1200px;
-        margin: auto;
-        padding: 12px 20px;
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        }
+:root{
+    --primary:#dc3545;
+    --primary-dark:#a02834;
+    --bg:#121212;
+    --card:#1e1e1e;
+    --border:#333;
+    --text:#ffffff;
+    --muted:#aaaaaa;
+}
 
-        .brand-img {
-        height: 38px;
-        }
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+}
 
-        .nav-items {
-        display: flex;
-        gap: 20px;
-        align-items: center;
-        }
+body{
+    background:
+    radial-gradient(circle at top,#2b0d11,#121212);
+    color:var(--text);
+    font-family:'Segoe UI',sans-serif;
+    min-height:100vh;
+}
 
-        .nav-items a,
-        .nav-items i {
-        color: #334155;
-        transition: 0.2s;
-        cursor: pointer;
-        }
+/* NAVBAR */
 
-        .nav-items i:hover,
-        .nav-items a:hover {
-        color: var(--primary);
-        transform: scale(1.1);
-        }
+.navbar{
+    position:fixed;
+    top:0;
+    width:100%;
+    background:#1a1a1a;
+    border-bottom:2px solid var(--primary);
+    z-index:999;
+    box-shadow:0 5px 20px rgba(220,53,69,.15);
+}
 
-        /* CONTAINER */
-        .container-custom {
-        max-width: 1100px;
-        margin: auto;
-        padding: 2rem 1rem;
-        }
+.nav-container{
+    max-width:1200px;
+    margin:auto;
+    padding:14px 20px;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+}
 
-        /* PROFILE HEADER */
-        .profile-header {
-        background: rgba(255,255,255,0.9);
-        backdrop-filter: blur(10px);
-        border-radius: 18px;
-        overflow: hidden;
-        border: 1px solid var(--border);
-        box-shadow: 0 15px 40px rgba(0,0,0,0.08);
-        }
+.logo{
+    font-size:1.4rem;
+    font-weight:700;
+    color:var(--primary);
+    cursor:pointer;
+}
 
-        .header-cover {
-        height: 180px;
-        background: linear-gradient(135deg, #941f1f, #000000);
-        }
+.logo span{
+    color:white;
+}
 
-        /* PROFILE TOP */
-        .profile-top {
-        display: flex;
-        align-items: flex-end;
-        gap: 20px;
-        margin-top: -60px;
-        padding: 0 25px;
-        flex-wrap: wrap;
-        }
+.nav-menu{
+    display:flex;
+    gap:18px;
+    align-items:center;
+}
 
-        /* AVATAR */
-        .avatar-img {
-        width: 120px;
-        height: 120px;
-        border-radius: 50%;
-        border: 4px solid white;
-        object-fit: cover;
-        }
+.nav-link{
+    color:#d0d0d0;
+    font-size:1.1rem;
+    transition:.3s;
+}
 
-        /* INFO */
-        .profile-info {
-        flex: 1;
-        }
+.nav-link:hover{
+    color:white;
+    transform:translateY(-2px);
+}
 
-        .profile-info h1 {
-        font-size: 1.6rem;
-        font-weight: 700;
-        }
+/* CONTAINER */
 
-        .handle {
-        color: var(--text-light);
-        }
+.container{
+    max-width:1100px;
+    margin:auto;
+    padding:110px 20px 40px;
+}
 
-        /* BUTTONS */
-        .action-buttons {
-        margin-left: auto;
-        display: flex;
-        gap: 10px;
-        }
+/* PROFILE CARD */
 
-        .btn-custom {
-        border-radius: 8px;
-        padding: 8px 14px;
-        font-weight: 600;
-        border: none;
-        }
+.profile-card{
+    background:rgba(30,30,30,.95);
+    border:1px solid var(--border);
+    border-radius:20px;
+    overflow:hidden;
+    box-shadow:0 15px 40px rgba(0,0,0,.4);
+}
 
-        .btn-primary-custom {
-        background: linear-gradient(135deg, var(--primary), var(--primary-dark));
-        color: white;
-        }
+/* COVER */
 
-        .btn-secondary-custom {
-        background: #f1f5f9;
-        color: var(--primary);
-        }
+.cover{
+    height:220px;
+    background:
+    linear-gradient(
+        135deg,
+        #dc3545,
+        #300404,
+        #000000
+    );
+    position:relative;
+}
 
-        /* STATS */
-        .profile-stats {
-        display: flex;
-        text-align: center;
-        border-top: 1px solid var(--border);
-        margin-top: 20px;
-        }
+.cover::after{
+    content:'';
+    position:absolute;
+    inset:0;
+    background:
+    linear-gradient(
+        to top,
+        rgba(0,0,0,.7),
+        transparent
+    );
+}
 
-        .stat-item {
-        flex: 1;
-        padding: 12px;
-        }
+/* PROFILE TOP */
 
-        .stat-count {
-        font-weight: bold;
-        color: var(--primary);
-        }
+.profile-top{
+    position:relative;
+    display:flex;
+    align-items:flex-end;
+    gap:25px;
+    padding:0 30px;
+    margin-top:-70px;
+    flex-wrap:wrap;
+}
 
-        /* CARDS */
-        .section-card {
-        background: white;
-        border-radius: 14px;
-        padding: 20px;
-        margin-top: 20px;
-        border: 1px solid var(--border);
-        box-shadow: 0 8px 25px rgba(0,0,0,0.05);
-        }
+.avatar{
+    width:140px;
+    height:140px;
+    border-radius:50%;
+    border:5px solid #1e1e1e;
+    object-fit:cover;
+    background:#111;
+    box-shadow:0 10px 30px rgba(0,0,0,.5);
+}
 
-        .section-title {
-        font-weight: 700;
-        margin-bottom: 12px;
-        border-bottom: 2px solid var(--primary);
-        padding-bottom: 5px;
-        }
+.profile-info{
+    flex:1;
+}
 
-        /* TAGS */
-        .tag-badge {
-        background: linear-gradient(135deg, #af1616, #6e0d0d);
-        color: white;
-        padding: 6px 12px;
-        border-radius: 20px;
-        font-size: 0.8rem;
-        margin: 4px;
-        display: inline-block;
-        }
+.profile-info h1{
+    font-size:2rem;
+    margin-bottom:5px;
+}
 
-        /* POSTS */
-        .posts-grid {
-        display: grid;
-        grid-template-columns: repeat(auto-fill, minmax(140px,1fr));
-        gap: 10px;
-        }
+.realname{
+    color:var(--muted);
+    margin-bottom:15px;
+}
 
-        .post-card {
-        border-radius: 10px;
-        overflow: hidden;
-        }
+/* USER META */
 
-        .post-img {
-        width: 100%;
-        height: 140px;
-        object-fit: cover;
-        }
+.meta{
+    display:flex;
+    flex-wrap:wrap;
+    gap:12px;
+}
 
-        /* NAVBAR BASE */
-        .navbar-custom {
-            position: fixed;
-            top: 0;
-            width: 100%;
-            background: #1a1a1a;
-            border-bottom: 2px solid #dc3545;
-            z-index: 999;
-            box-shadow: 0 4px 20px rgba(220, 53, 69, 0.15);
-        }
+.meta-box{
+    background:#2a2a2a;
+    border:1px solid #444;
+    border-radius:12px;
+    padding:10px 14px;
+    min-width:120px;
+}
 
-        /* CONTAINER */
-        .nav-container {
-            max-width: 1200px;
-            margin: auto;
-            padding: 12px 20px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
+.meta-box small{
+    display:block;
+    color:var(--muted);
+    font-size:12px;
+    margin-bottom:4px;
+}
 
-        /* LOGO */
-        .logo {
-            font-size: 1.4rem;
-            font-weight: 700;
-            color: #dc3545;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            gap: 6px;
-            letter-spacing: 0.5px;
-        }
+.meta-box strong{
+    color:white;
+    font-size:14px;
+}
 
-        .logo span {
-            color: #ffffff;
-        }
+/* ACTIONS */
 
-        .logo:hover {
-            text-shadow: 0 0 10px rgba(220, 53, 69, 0.6);
-        }
+.actions{
+    margin-left:auto;
+    display:flex;
+    gap:10px;
+}
 
-        /* MENU */
-        .nav-menu {
-            display: flex;
-            align-items: center;
-            gap: 18px;
-        }
+.btn{
+    border:none;
+    padding:11px 18px;
+    border-radius:10px;
+    cursor:pointer;
+    font-weight:600;
+    transition:.3s;
+}
 
-        /* LINKS */
-        .nav-link {
-            color: #d0d0d0;
-            font-size: 1.1rem;
-            padding: 8px 10px;
-            border-radius: 8px;
-            transition: all 0.25s ease;
-            position: relative;
-        }
+.btn-primary{
+    background:
+    linear-gradient(
+        135deg,
+        var(--primary),
+        var(--primary-dark)
+    );
+    color:white;
+}
 
-        /* HOVER EFFECT */
-        .nav-link:hover {
-            color: #ffffff;
-            background: rgba(220, 53, 69, 0.15);
-            transform: translateY(-2px);
-        }
+.btn-secondary{
+    background:#2d2d2d;
+    color:white;
+}
 
-        /* ACTIVE LINK */
-        .nav-link.active {
-            color: #dc3545;
-        }
+.btn:hover{
+    transform:translateY(-2px);
+}
 
-        /* PROFILE ICON SPECIAL */
-        .nav-link.profile i {
-            font-size: 1.4rem;
-        }
+/* STATS */
 
-        /* MOBILE */
-        @media (max-width: 768px) {
-            .nav-container {
-                padding: 10px 15px;
-            }
+.stats{
+    display:grid;
+    grid-template-columns:repeat(3,1fr);
+    border-top:1px solid var(--border);
+    margin-top:30px;
+}
 
-            .logo {
-                font-size: 1.2rem;
-            }
+.stat{
+    padding:20px;
+    text-align:center;
+}
 
-            .nav-menu {
-                gap: 12px;
-            }
+.stat h2{
+    color:var(--primary);
+    margin-bottom:5px;
+}
 
-            .nav-link {
-                font-size: 1rem;
-                padding: 6px;
-            }
-        }
-    </style>
+.stat p{
+    color:var(--muted);
+    font-size:14px;
+}
+
+/* SECTIONS */
+
+.section{
+    margin-top:25px;
+    background:var(--card);
+    border:1px solid var(--border);
+    border-radius:16px;
+    padding:25px;
+}
+
+.section-title{
+    font-size:18px;
+    margin-bottom:18px;
+    border-left:4px solid var(--primary);
+    padding-left:10px;
+}
+
+/* BIO */
+
+.bio{
+    line-height:1.8;
+    color:#ddd;
+}
+
+/* TAGS */
+
+.tags{
+    display:flex;
+    flex-wrap:wrap;
+    gap:10px;
+}
+
+.tag{
+    background:
+    linear-gradient(
+        135deg,
+        #dc3545,
+        #6f0d18
+    );
+    color:white;
+    padding:8px 14px;
+    border-radius:30px;
+    font-size:13px;
+    font-weight:600;
+}
+
+/* SOCIAL */
+
+.social-grid{
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
+    gap:15px;
+}
+
+.social-box{
+    background:#181818;
+    border:1px solid #333;
+    border-radius:12px;
+    padding:15px;
+    display:flex;
+    align-items:center;
+    gap:12px;
+}
+
+.social-box i{
+    font-size:22px;
+    color:var(--primary);
+}
+
+/* POSTS */
+
+.posts-grid{
+    display:grid;
+    grid-template-columns:
+    repeat(auto-fill,minmax(180px,1fr));
+    gap:15px;
+}
+
+.post{
+    position:relative;
+    overflow:hidden;
+    border-radius:14px;
+}
+
+.post img{
+    width:100%;
+    height:180px;
+    object-fit:cover;
+    transition:.4s;
+}
+
+.post:hover img{
+    transform:scale(1.08);
+}
+
+.overlay{
+    position:absolute;
+    inset:0;
+    background:rgba(0,0,0,.5);
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    opacity:0;
+    transition:.3s;
+}
+
+.post:hover .overlay{
+    opacity:1;
+}
+
+/* EMPTY */
+
+.empty{
+    text-align:center;
+    color:var(--muted);
+    padding:30px;
+}
+
+/* MOBILE */
+
+@media(max-width:768px){
+
+    .profile-top{
+        flex-direction:column;
+        align-items:center;
+        text-align:center;
+    }
+
+    .actions{
+        width:100%;
+        justify-content:center;
+        margin:0;
+    }
+
+    .stats{
+        grid-template-columns:1fr;
+    }
+
+    .meta{
+        justify-content:center;
+    }
+
+    .profile-info h1{
+        font-size:1.6rem;
+    }
+
+    .avatar{
+        width:120px;
+        height:120px;
+    }
+
+}
+
+</style>
 </head>
 
 <body>
 
 <!-- NAVBAR -->
-<nav class="navbar-custom">
+
+<div class="navbar">
+
     <div class="nav-container">
 
-        <!-- LOGO -->
-        <div class="logo" onclick="location.href='home.php'">
+        <div class="logo"
+        onclick="location.href='home.php'">
+
             🎮 <span>GetMatch</span>
+
         </div>
 
-        <!-- MENU -->
         <div class="nav-menu">
-            <a href="home.php" class="nav-link active">
-                <i class="fas fa-home"></i>
-            </a>
 
-            <a href="#" class="nav-link" data-bs-toggle="modal" data-bs-target="#search-model">
-                <i class="fas fa-search"></i>
+            <a href="home.php" class="nav-link">
+                <i class="fas fa-home"></i>
             </a>
 
             <a href="Events.php" class="nav-link">
@@ -365,161 +464,314 @@ $tags_result = $tags_stmt->get_result();
                 <i class="fas fa-video"></i>
             </a>
 
-            <a href="my_Profile.php" class="nav-link profile">
+            <a href="my_Profile.php" class="nav-link">
                 <i class="fas fa-user-circle"></i>
             </a>
-        </div>
-
-    </div>
-</nav>
-
-<div class="container-custom">
-
-    <!-- Profile Header -->
-    <div class="profile-header">
-        <div class="header-cover"></div>
-        <div class="profile-content">
-
-            <div class="profile-top">
-                <div class="profile-avatar">
-                    <img src="<?php echo 'assets/images/profiles/' . htmlspecialchars($user['IMAGE']); ?>"
-                         alt="Profile photo"
-                         class="avatar-img">
-                </div>
-
-                <div class="profile-info">
-                    <h1><?php echo htmlspecialchars($user['USER_NAME']); ?></h1>
-                    <div class="handle"><?php echo htmlspecialchars($user['FULL_NAME']); ?></div>
-                </div>
-
-                <div class="action-buttons">
-                    <form action="edit-profile.php" style="display:contents;">
-                        <button type="submit" class="btn-custom btn-primary-custom">
-                            <i class="fas fa-edit"></i> Edit Profile
-                        </button>
-                    </form>
-                    <button class="btn-custom btn-secondary-custom border rounded-circle" type="button">
-                        <i class="fas fa-share"></i> 
-                    </button>
-                </div>
-            </div>
-
-            <!-- Stats moved outside the flex row so they always span full width -->
-            <div class="profile-stats">
-                <div class="stat-item">
-                    <span class="stat-count"><?php echo (int)($user['POSTS'] ?? 0); ?></span>
-                    <span class="stat-label">Posts</span>
-                </div>
-                <div class="stat-item">
-                    <span class="stat-count"><?php echo (int)($user['FALLOWERS'] ?? 0); ?></span>
-                    <span class="stat-label">Followers</span>
-                </div>
-                <div class="stat-item">
-                    <span class="stat-count"><?php echo (int)($user['FALLOWING'] ?? 0); ?></span>
-                    <span class="stat-label">Following</span>
-                </div>
-            </div>
 
         </div>
-    </div>
 
-    <!-- About -->
-    <div class="section-card">
-        <h2 class="section-title"><i class="fas fa-user"></i> About</h2>
-        <p class="bio-text">
-            <?php echo $user['BIO'] ? nl2br(htmlspecialchars($user['BIO'])) : '<em>No bio yet.</em>'; ?>
-        </p>
-    </div>
-
-    <!-- Interests -->
-    <div class="section-card">
-        <h2 class="section-title"><i class="fas fa-star"></i> Interests</h2>
-        <div class="tags-container">
-            <?php if($tags_result->num_rows > 0): ?>
-                <?php while($tag = $tags_result->fetch_assoc()): ?>
-                    <span class="tag-badge">
-                        <i class="fas fa-hashtag"></i>
-                        <?php echo htmlspecialchars($tag['Tag_Name']); ?>
-                    </span>
-                <?php endwhile; ?>
-            <?php else: ?>
-                <p class="bio-text" style="margin:0;">No interests selected yet.</p>
-            <?php endif; ?>
-        </div>
-    </div>
-
-    <!-- Contact & Social -->
-    <div class="section-card">
-        <h2 class="section-title"><i class="fas fa-link"></i> Contact &amp; Social</h2>
-        <div class="social-list">
-            <div class="social-item">
-                <i class="fas fa-envelope"></i>
-                <div>
-                    <small style="color:var(--text-light);">Email</small>
-                    <strong><?php echo htmlspecialchars($user['EMAIL']); ?></strong>
-                </div>
-            </div>
-            <?php if(!empty($user['FACEBOOK'])): ?>
-            <div class="social-item">
-                <i class="fab fa-facebook"></i>
-                <div>
-                    <small style="color:var(--text-light);">Facebook</small>
-                    <strong><?php echo htmlspecialchars($user['FACEBOOK']); ?></strong>
-                </div>
-            </div>
-            <?php endif; ?>
-            <?php if(!empty($user['WHATSAPP'])): ?>
-            <div class="social-item">
-                <i class="fab fa-whatsapp"></i>
-                <div>
-                    <small style="color:var(--text-light);">WhatsApp</small>
-                    <strong><?php echo htmlspecialchars($user['WHATSAPP']); ?></strong>
-                </div>
-            </div>
-            <?php endif; ?>
-        </div>
-    </div>
-
-    <!-- Recent Posts -->
-    <div class="section-card">
-        <h2 class="section-title"><i class="fas fa-images"></i> Recent Posts</h2>
-        <div class="posts-grid">
-            <?php
-            $posts_stmt = $conn->prepare("SELECT * FROM posts WHERE User_ID = ? ORDER BY Post_ID DESC");
-            $posts_stmt->bind_param("i", $user_id);
-            $posts_stmt->execute();
-            $posts = $posts_stmt->get_result();
-
-            if($posts->num_rows > 0):
-                while($post = $posts->fetch_assoc()):
-            ?>
-            <div class="post-card">
-                <img src="<?php echo 'assets/images/posts/' . htmlspecialchars($post['Img_Path']); ?>"
-                     alt="Post image"
-                     class="post-img">
-                <div class="post-overlay">
-                    <i class="fas fa-heart" style="color:#ec4899;font-size:2rem;"></i>
-                </div>
-            </div>
-            <?php
-                endwhile;
-            else:
-            ?>
-            <div class="empty-state">
-                <i class="fas fa-image"></i>
-                <p>No posts yet. Start sharing your events!</p>
-            </div>
-            <?php endif; ?>
-        </div>
     </div>
 
 </div>
 
-<script>
-    // Guard: element may not exist on this page
-    var logo = document.getElementById("logo-img");
-    if(logo) logo.onclick = function(){ location.href = "home.php"; };
-</script>
+<div class="container">
+
+    <!-- PROFILE -->
+
+    <div class="profile-card">
+
+        <div class="cover"></div>
+
+        <div class="profile-top">
+
+            <img
+            src="<?php echo 'assets/images/profiles/' . htmlspecialchars($user['IMAGE']); ?>"
+            class="avatar">
+
+            <div class="profile-info">
+
+                <h1>
+                    <?php echo htmlspecialchars($user['USER_NAME']); ?>
+                </h1>
+
+                <div class="realname">
+                    <?php echo htmlspecialchars($user['FULL_NAME']); ?>
+                </div>
+
+                <!-- AGE + GENDER -->
+
+                <div class="meta">
+
+                    <div class="meta-box">
+                        <small>Age</small>
+                        <strong>
+                            <?php echo !empty($user['AGE']) ? $user['AGE'] : 'N/A'; ?>
+                        </strong>
+                    </div>
+
+                    <div class="meta-box">
+                        <small>Gender</small>
+                        <strong>
+                            <?php echo !empty($user['GENDER']) ? htmlspecialchars($user['GENDER']) : 'N/A'; ?>
+                        </strong>
+                    </div>
+
+                    <div class="meta-box">
+                        <small>Email</small>
+                        <strong>
+                            <?php echo htmlspecialchars($user['EMAIL']); ?>
+                        </strong>
+                    </div>
+
+                </div>
+
+            </div>
+
+            <div class="actions">
+
+                <button
+                class="btn btn-primary"
+                onclick="location.href='edit-profile.php'">
+
+                    <i class="fas fa-edit"></i>
+                    Edit Profile
+
+                </button>
+
+                <button class="btn btn-secondary">
+
+                    <i class="fas fa-share"></i>
+
+                </button>
+
+            </div>
+
+        </div>
+
+        <!-- STATS -->
+
+        <div class="stats">
+
+            <div class="stat">
+                <h2>
+                    <?php echo (int)($user['POSTS'] ?? 0); ?>
+                </h2>
+                <p>Posts</p>
+            </div>
+
+            <div class="stat">
+                <h2>
+                    <?php echo (int)($user['FALLOWERS'] ?? 0); ?>
+                </h2>
+                <p>Followers</p>
+            </div>
+
+            <div class="stat">
+                <h2>
+                    <?php echo (int)($user['FALLOWING'] ?? 0); ?>
+                </h2>
+                <p>Following</p>
+            </div>
+
+        </div>
+
+    </div>
+
+    <!-- ABOUT -->
+
+    <div class="section">
+
+        <h2 class="section-title">
+            <i class="fas fa-user"></i>
+            About Me
+        </h2>
+
+        <div class="bio">
+
+            <?php
+            echo $user['BIO']
+            ?
+            nl2br(htmlspecialchars($user['BIO']))
+            :
+            'No bio added yet.';
+            ?>
+
+        </div>
+
+    </div>
+
+    <!-- INTERESTS -->
+
+    <div class="section">
+
+        <h2 class="section-title">
+            <i class="fas fa-gamepad"></i>
+            Interests
+        </h2>
+
+        <div class="tags">
+
+        <?php if($tags_result->num_rows > 0): ?>
+
+            <?php while($tag = $tags_result->fetch_assoc()): ?>
+
+                <div class="tag">
+                    #<?php echo htmlspecialchars($tag['Tag_Name']); ?>
+                </div>
+
+            <?php endwhile; ?>
+
+        <?php else: ?>
+
+            <div class="empty">
+                No interests selected yet.
+            </div>
+
+        <?php endif; ?>
+
+        </div>
+
+    </div>
+
+    <!-- CONTACT -->
+
+    <div class="section">
+
+        <h2 class="section-title">
+            <i class="fas fa-link"></i>
+            Contact & Social
+        </h2>
+
+        <div class="social-grid">
+
+            <div class="social-box">
+
+                <i class="fas fa-envelope"></i>
+
+                <div>
+
+                    <small style="color:#aaa;">
+                        Email
+                    </small>
+
+                    <div>
+                        <?php echo htmlspecialchars($user['EMAIL']); ?>
+                    </div>
+
+                </div>
+
+            </div>
+
+            <?php if(!empty($user['FACEBOOK'])): ?>
+
+            <div class="social-box">
+
+                <i class="fab fa-facebook"></i>
+
+                <div>
+
+                    <small style="color:#aaa;">
+                        Facebook
+                    </small>
+
+                    <div>
+                        <?php echo htmlspecialchars($user['FACEBOOK']); ?>
+                    </div>
+
+                </div>
+
+            </div>
+
+            <?php endif; ?>
+
+            <?php if(!empty($user['WHATSAPP'])): ?>
+
+            <div class="social-box">
+
+                <i class="fab fa-whatsapp"></i>
+
+                <div>
+
+                    <small style="color:#aaa;">
+                        WhatsApp
+                    </small>
+
+                    <div>
+                        <?php echo htmlspecialchars($user['WHATSAPP']); ?>
+                    </div>
+
+                </div>
+
+            </div>
+
+            <?php endif; ?>
+
+        </div>
+
+    </div>
+
+    <!-- POSTS -->
+
+    <div class="section">
+
+        <h2 class="section-title">
+            <i class="fas fa-images"></i>
+            Recent Posts
+        </h2>
+
+        <div class="posts-grid">
+
+        <?php
+
+        $posts_stmt = $conn->prepare("
+            SELECT * 
+            FROM posts 
+            WHERE User_ID = ?
+            ORDER BY Post_ID DESC
+        ");
+
+        $posts_stmt->bind_param("i", $user_id);
+        $posts_stmt->execute();
+
+        $posts = $posts_stmt->get_result();
+
+        if($posts->num_rows > 0):
+
+            while($post = $posts->fetch_assoc()):
+
+        ?>
+
+            <div class="post">
+
+                <img
+                src="<?php echo 'assets/images/posts/' . htmlspecialchars($post['Img_Path']); ?>">
+
+                <div class="overlay">
+
+                    <i class="fas fa-heart"
+                    style="font-size:2rem;color:#ff4d6d;"></i>
+
+                </div>
+
+            </div>
+
+        <?php
+            endwhile;
+
+        else:
+        ?>
+
+            <div class="empty">
+                No posts yet.
+            </div>
+
+        <?php endif; ?>
+
+        </div>
+
+    </div>
+
+</div>
 
 </body>
 </html>

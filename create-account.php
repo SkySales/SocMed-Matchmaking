@@ -30,6 +30,46 @@ body {
     font-family: 'Inter', sans-serif;
     background: radial-gradient(circle at top, #2d2d2d, #121212);
     min-height: 100vh;
+    overflow-x: hidden;
+}
+
+/* BACKGROUND ANIMATION */
+body::before{
+    content:'';
+    position:fixed;
+    width:500px;
+    height:500px;
+    background:rgba(220,53,69,0.15);
+    border-radius:50%;
+    top:-150px;
+    left:-150px;
+    filter:blur(120px);
+    animation: float 8s ease-in-out infinite;
+}
+
+body::after{
+    content:'';
+    position:fixed;
+    width:400px;
+    height:400px;
+    background:rgba(220,53,69,0.1);
+    border-radius:50%;
+    bottom:-150px;
+    right:-150px;
+    filter:blur(120px);
+    animation: float2 10s ease-in-out infinite;
+}
+
+@keyframes float{
+    0%{transform:translateY(0);}
+    50%{transform:translateY(30px);}
+    100%{transform:translateY(0);}
+}
+
+@keyframes float2{
+    0%{transform:translateY(0);}
+    50%{transform:translateY(-30px);}
+    100%{transform:translateY(0);}
 }
 
 /* CONTAINER */
@@ -44,24 +84,51 @@ body {
 /* CARD */
 .signup-card {
     display: flex;
-    max-width: 950px;
+    max-width: 1000px;
     width: 100%;
     border-radius: 18px;
     overflow: hidden;
     background: var(--card-dark);
     box-shadow: 0 20px 60px rgba(220,53,69,0.2);
     border: 1px solid rgba(220,53,69,0.3);
+    animation: fadeIn 0.8s ease;
+    position:relative;
+    z-index:10;
+}
+
+@keyframes fadeIn{
+    from{
+        opacity:0;
+        transform:translateY(30px);
+    }
+    to{
+        opacity:1;
+        transform:translateY(0);
+    }
 }
 
 /* LEFT IMAGE */
 .signup-image {
     flex: 1;
+    position: relative;
 }
 
 .signup-image img {
     width: 100%;
     height: 100%;
     object-fit: cover;
+}
+
+.signup-image::after{
+    content:'GETMATCH';
+    position:absolute;
+    bottom:30px;
+    left:30px;
+    font-size:32px;
+    font-weight:800;
+    color:white;
+    letter-spacing:2px;
+    text-shadow:0 0 20px rgba(0,0,0,0.6);
 }
 
 /* RIGHT FORM */
@@ -72,7 +139,7 @@ body {
 
 /* HEADER */
 .brand {
-    font-size: 1.6rem;
+    font-size: 1.9rem;
     font-weight: 700;
     color: var(--primary);
     margin-bottom: 10px;
@@ -98,7 +165,8 @@ body {
     color: var(--text-light);
 }
 
-.input-group input {
+.input-group input,
+.input-group select {
     width: 100%;
     padding: 12px 12px 12px 38px;
     border-radius: 8px;
@@ -109,10 +177,40 @@ body {
     transition: 0.3s;
 }
 
-.input-group input:focus {
+.input-group input:focus,
+.input-group select:focus {
     border-color: var(--primary);
     box-shadow: 0 0 0 2px rgba(220,53,69,0.2);
     outline: none;
+}
+
+/* PASSWORD STRENGTH */
+.password-strength{
+    margin-top:-10px;
+    margin-bottom:15px;
+    font-size:13px;
+    color:#ffc107;
+}
+
+/* TERMS */
+.terms{
+    display:flex;
+    align-items:flex-start;
+    gap:10px;
+    margin-top:10px;
+    margin-bottom:20px;
+    color:var(--text-light);
+    font-size:13px;
+}
+
+.terms input{
+    margin-top:3px;
+    accent-color:var(--primary);
+}
+
+.terms a{
+    color:var(--primary);
+    text-decoration:none;
 }
 
 /* BUTTON */
@@ -127,11 +225,36 @@ body {
     letter-spacing: 0.5px;
     transition: 0.3s;
     margin-top: 10px;
+    cursor:pointer;
+    position:relative;
 }
 
 .btn-signup:hover {
     transform: translateY(-2px);
     box-shadow: 0 10px 25px rgba(220,53,69,0.4);
+}
+
+/* LOADING */
+.btn-loading{
+    pointer-events:none;
+    opacity:0.8;
+}
+
+.spinner{
+    border:3px solid rgba(255,255,255,0.2);
+    border-top:3px solid #fff;
+    border-radius:50%;
+    width:18px;
+    height:18px;
+    animation:spin 1s linear infinite;
+    display:inline-block;
+    vertical-align:middle;
+}
+
+@keyframes spin{
+    to{
+        transform:rotate(360deg);
+    }
 }
 
 /* ALERTS */
@@ -167,8 +290,16 @@ body {
     font-weight: 600;
 }
 
+.copyright{
+    margin-top:20px;
+    text-align:center;
+    font-size:12px;
+    color:#777;
+}
+
 /* RESPONSIVE */
 @media(max-width: 768px){
+
     .signup-card {
         flex-direction: column;
     }
@@ -180,6 +311,7 @@ body {
     .signup-form {
         padding: 25px;
     }
+
 }
 </style>
 </head>
@@ -199,44 +331,129 @@ body {
     <div class="signup-form">
 
         <div class="brand">GetMatch</div>
-        <div class="subtitle">Create your account and start matching</div>
+        <div class="subtitle">
+            Create your account and start matching with players.
+        </div>
 
-        <form method="post" action="signup_process.php">
+        <form method="post" action="signup_process.php" id="signupForm">
 
         <?php if(isset($_GET['error_message'])){ ?>
-            <div class="alert alert-danger"><?php echo htmlspecialchars($_GET['error_message']); ?></div>
+            <div class="alert alert-danger">
+                <?php echo htmlspecialchars($_GET['error_message']); ?>
+            </div>
         <?php } ?>
 
         <?php if(isset($_GET['sucess_message'])){ ?>
-            <div class="alert alert-success"><?php echo htmlspecialchars($_GET['sucess_message']); ?></div>
+            <div class="alert alert-success">
+                <?php echo htmlspecialchars($_GET['sucess_message']); ?>
+            </div>
         <?php } ?>
 
+        <!-- USERNAME -->
         <div class="input-group">
             <i class="fas fa-user"></i>
-            <input type="text" name="username" placeholder="Username" required>
+            <input 
+            type="text"
+            name="username"
+            placeholder="Username"
+            minlength="3"
+            maxlength="20"
+            required>
         </div>
 
+        <!-- EMAIL -->
         <div class="input-group">
             <i class="fas fa-envelope"></i>
-            <input type="email" name="email" placeholder="Email address" required>
+            <input 
+            type="email"
+            name="email"
+            placeholder="Email address"
+            required>
         </div>
 
+        <!-- BIRTHDATE -->
+        <div class="input-group">
+            <i class="fas fa-calendar"></i>
+            <input 
+            type="date"
+            name="birthdate"
+            required>
+        </div>
+
+        <!-- GENDER -->
+        <div class="input-group">
+            <i class="fas fa-venus-mars"></i>
+
+            <select name="gender" required>
+                <option value="">Select Gender</option>
+                <option value="Male">Male</option>
+                <option value="Female">Female</option>
+                <option value="Prefer not to say">
+                    Prefer not to say
+                </option>
+            </select>
+        </div>
+
+        <!-- PASSWORD -->
         <div class="input-group">
             <i class="fas fa-lock"></i>
-            <input type="password" name="password" placeholder="Password" required>
+            <input 
+            type="password"
+            id="password"
+            name="password"
+            placeholder="Password"
+            required>
         </div>
 
+        <div class="password-strength" id="strength">
+            Password must be at least 8 characters.
+        </div>
+
+        <!-- CONFIRM PASSWORD -->
         <div class="input-group">
             <i class="fas fa-lock"></i>
-            <input type="password" name="confirm_password" placeholder="Confirm password" required>
+            <input 
+            type="password"
+            name="confirm_password"
+            placeholder="Confirm password"
+            required>
         </div>
 
-        <button class="btn-signup" type="submit" name="signup_btn">
+        <!-- TERMS -->
+        <div class="terms">
+
+            <input 
+            type="checkbox"
+            required>
+
+            <div>
+                I agree to the 
+                <a href="#" onclick="showTerms()">
+                    Terms & Conditions
+                </a>
+                and confirm that my information is valid.
+            </div>
+
+        </div>
+
+        <!-- BUTTON -->
+        <button class="btn-signup"
+        type="submit"
+        name="signup_btn"
+        id="signupBtn">
+
             Create Account
+
         </button>
 
+        <!-- FOOTER -->
         <div class="form-footer">
-            Already have an account? <a href="login.php">Sign In</a>
+            Already have an account?
+            <a href="login.php">Sign In</a>
+        </div>
+
+        <div class="copyright">
+            © 2026 GetMatch Matchmaking System
         </div>
 
         </form>
@@ -245,6 +462,84 @@ body {
 
 </div>
 </div>
+
+<script>
+
+/* PASSWORD STRENGTH */
+
+const password =
+document.getElementById("password");
+
+const strength =
+document.getElementById("strength");
+
+password.addEventListener("keyup", ()=>{
+
+    let val = password.value;
+
+    if(val.length < 8){
+
+        strength.innerHTML =
+        "❌ Weak password";
+
+        strength.style.color = "#ff6b6b";
+
+    }else if(
+        /[A-Z]/.test(val) &&
+        /[0-9]/.test(val)
+    ){
+
+        strength.innerHTML =
+        "✅ Strong password";
+
+        strength.style.color = "#51cf66";
+
+    }else{
+
+        strength.innerHTML =
+        "⚠ Medium password";
+
+        strength.style.color = "#ffc107";
+    }
+
+});
+
+/* TERMS */
+
+function showTerms(){
+
+alert(`
+GETMATCH TERMS & CONDITIONS
+
+• Respect all users
+• No cheating or toxic behavior
+• No fake accounts
+• Users must be 13+
+• Lobby abuse may result in suspension
+
+By creating an account,
+you agree to our platform rules.
+`);
+
+}
+
+/* LOADING ANIMATION */
+
+document
+.getElementById("signupForm")
+.addEventListener("submit", function(){
+
+    const btn =
+    document.getElementById("signupBtn");
+
+    btn.classList.add("btn-loading");
+
+    btn.innerHTML =
+    `<span class="spinner"></span> Creating Account...`;
+
+});
+
+</script>
 
 </body>
 </html>
