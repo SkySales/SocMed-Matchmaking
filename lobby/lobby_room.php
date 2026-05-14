@@ -420,23 +420,23 @@ body{
     </div>
 
     <?php if(
-        $lobby['Is_Private'] &&
-        $_SESSION['id'] == $lobby['Host_ID']
-        ): ?>
+    $lobby['Is_Private'] &&
+    $_SESSION['id'] == $lobby['Host_ID']
+    ): ?>
 
-        <div class="info">
+    <div class="info">
 
-            <span>Lobby PIN</span>
+        <span>Lobby PIN</span>
 
-            <strong style="
-                color:#ffc107;
-                letter-spacing:2px;
-                font-size:18px;
-            ">
-                <?php echo $lobby['Lobby_Code']; ?>
-            </strong>
+        <strong style="
+            color:#ffc107;
+            letter-spacing:2px;
+            font-size:18px;
+        ">
+            <?php echo $lobby['Lobby_Code']; ?>
+        </strong>
 
-        </div>
+    </div>
 
     <?php endif; ?>
 
