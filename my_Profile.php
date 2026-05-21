@@ -498,7 +498,7 @@ body{
                     <?php echo htmlspecialchars($user['FULL_NAME']); ?>
                 </div>
 
-                <!-- AGE + GENDER -->
+                <!-- AGE + GENDER + BIRTHDATE -->
 
                 <div class="meta">
 
@@ -512,7 +512,20 @@ body{
                     <div class="meta-box">
                         <small>Gender</small>
                         <strong>
-                            <?php echo !empty($user['GENDER']) ? htmlspecialchars($user['GENDER']) : 'N/A'; ?>
+                            <?php echo !empty($user['Gender']) ? htmlspecialchars($user['Gender']) : 'N/A'; ?>
+                        </strong>
+                    </div>
+
+                    <div class="meta-box">
+                        <small>Birthdate</small>
+                        <strong>
+                            <?php 
+                                if(!empty($user['Birthdate'])) {
+                                    echo date('M d, Y', strtotime($user['Birthdate']));
+                                } else {
+                                    echo 'N/A';
+                                }
+                            ?>
                         </strong>
                     </div>
 

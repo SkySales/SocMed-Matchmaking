@@ -66,6 +66,11 @@ session_regenerate_id(true);
             border-radius: 10px;
         }
 
+        /* Style for text-only posts (no image) */
+        .post #data-contents {
+            min-height: 150px;
+        }
+
     </style>
 
 </head>
@@ -206,7 +211,9 @@ $comments = $stmt->get_result();
 
                     </div>
 
+                    <?php if(!empty($post['Img_Path'])): ?>
                     <img src="<?php echo "assets/images/posts/". $post['Img_Path']; ?>" class="post-img">
+                    <?php endif; ?>
 
                     <div id="data-contents">
 

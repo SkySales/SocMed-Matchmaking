@@ -11,21 +11,28 @@ if(isset($_POST['target_id']))
 {
     $target_id = $_POST['target_id'];
 
-    // ✅ GET USER
-    $stmt = $conn->prepare("SELECT * FROM users WHERE User_ID = ?");
+    // GET USER
+    $stmt = $conn->prepare("
+        SELECT * FROM users 
+        WHERE User_ID = ?
+    ");
+
     $stmt->bind_param("i", $target_id);
     $stmt->execute();
+
     $user_array = $stmt->get_result();
 
-    // ✅ GET TAGS (FIXED)
+    // GET TAGS
     $tags_stmt = $conn->prepare("
         SELECT t.Tag_Name 
         FROM user_tags ut
         JOIN tags t ON ut.Tag_ID = t.Tag_ID
         WHERE ut.User_ID = ?
     ");
+
     $tags_stmt->bind_param("i", $target_id);
     $tags_stmt->execute();
+
     $tags_result = $tags_stmt->get_result();
 }
 else
@@ -36,273 +43,618 @@ else
 ?>
 
 <!DOCTYPE html>
-
 <html lang="en">
 
 <head>
 
-    <meta charset="UTF-8">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GetMatch Profile</title>
 
-    <title>GetMatch</title>
+<link rel="icon"
+href="assets/images/event_accepted_50px.png"
+type="image/icon type">
 
-    <link rel="icon" href="assets/images/event_accepted_50px.png" type="image/icon type">
+<link rel="stylesheet"
+href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
 
-    <link rel="stylesheet" href=https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css>
+<link rel="stylesheet"
+href="https://use.fontawesome.com/releases/v5.15.4/css/all.css">
 
-    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.bundle.min.js"></script>
+<link rel="stylesheet"
+href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.2/font/bootstrap-icons.css">
 
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
 
-    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.15.4/css/all.css" integrity="sha384-DyZ88mC6Up2uqS4h/KRgHuoeGwBcD4Ng9SiP4dIRy0EXTlnuz47vAwmeGwVChigm" crossorigin="anonymous"/>
+<style>
 
-    <link rel="stylesheet" href="assets/css/style.css">
+:root{
+    --primary:#dc3545;
+    --primary-dark:#8b0000;
+    --dark:#111;
+    --card:#1c1c1c;
+    --border:#333;
+    --text:#fff;
+    --muted:#aaa;
+}
 
-    <link rel="stylesheet" href="assets/css/profile-page.css">
+/* BODY */
+body{
+    background:
+    linear-gradient(135deg,#0f0f0f,#1a1a1a);
+    min-height:100vh;
+    overflow-x:hidden;
+    color:white;
+    font-family:'Segoe UI',sans-serif;
+}
 
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.2/font/bootstrap-icons.css">
+/* COVER */
+.cover{
+    background:
+    linear-gradient(
+    135deg,
+    rgba(220,53,69,.9),
+    rgba(0,0,0,.9)
+    );
 
+    height:260px;
+    border-radius:18px 18px 0 0;
+}
 
-    <style>
-        .profile-head {
-            transform: translateY(5rem)
-        }
+/* PROFILE CARD */
+.profile-wrapper{
+    background:#1a1a1a;
+    border-radius:18px;
+    overflow:hidden;
+    box-shadow:
+    0 15px 40px rgba(0,0,0,.5);
+    border:1px solid #2e2e2e;
+}
 
-        @import url("https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.2/font/bootstrap-icons.css");
+/* PROFILE TOP */
+.profile-head{
+    margin-top:-90px;
+    padding:0 30px 30px;
+}
 
-        .cover {
-            background-image: url(https://images.unsplash.com/photo-1530305408560-82d13781b33a?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=1352&q=80);
-            background-size: cover;
-            background-repeat: no-repeat;
-            border-radius: 10px;
-        }
+/* IMAGE */
+.profile-img{
+    width:170px;
+    height:170px;
+    object-fit:cover;
+    border-radius:50%;
+    border:5px solid #1a1a1a;
+    box-shadow:0 10px 30px rgba(0,0,0,.4);
+}
 
-        body {
-            background: #ffffff;
-            min-height: 100vh;
-            overflow-x:hidden;
-        }
+/* USERNAME */
+.username{
+    font-size:2rem;
+    font-weight:700;
+}
 
-        .badge-primary {
-            background: linear-gradient(45deg, #0d6efd, #6610f2);
-            border-radius: 20px;
-        }
-    </style>
+.fullname{
+    color:#ccc;
+    margin-top:5px;
+}
+
+/* BUTTONS */
+.btn-custom{
+    border:none;
+    padding:10px 18px;
+    border-radius:10px;
+    font-weight:600;
+    transition:.3s;
+}
+
+.btn-follow{
+    background:linear-gradient(
+    135deg,
+    var(--primary),
+    var(--primary-dark)
+    );
+
+    color:white;
+}
+
+.btn-unfollow{
+    background:#444;
+    color:white;
+}
+
+.btn-custom:hover{
+    transform:translateY(-2px);
+}
+
+/* STATS */
+.stats{
+    display:flex;
+    justify-content:center;
+    gap:50px;
+    padding:20px;
+    border-top:1px solid #2c2c2c;
+    border-bottom:1px solid #2c2c2c;
+    text-align:center;
+}
+
+.stat-number{
+    font-size:1.4rem;
+    font-weight:700;
+    color:var(--primary);
+}
+
+.stat-label{
+    color:#bbb;
+    font-size:.9rem;
+}
+
+/* CARD */
+.info-card{
+    background:#222;
+    border:1px solid #333;
+    border-radius:14px;
+    padding:20px;
+    margin-bottom:20px;
+}
+
+.section-title{
+    font-size:1.2rem;
+    font-weight:700;
+    margin-bottom:15px;
+    border-left:4px solid var(--primary);
+    padding-left:10px;
+}
+
+/* BADGES */
+.tag-badge{
+    display:inline-block;
+    background:
+    linear-gradient(
+    135deg,
+    var(--primary),
+    #ff4d5d
+    );
+
+    color:white;
+    padding:8px 14px;
+    border-radius:20px;
+    margin:5px;
+    font-size:13px;
+}
+
+/* PROFILE DETAILS */
+.detail-box{
+    display:flex;
+    align-items:center;
+    margin-bottom:15px;
+    gap:15px;
+}
+
+.detail-icon{
+    width:45px;
+    height:45px;
+    border-radius:12px;
+    background:#2c2c2c;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    color:var(--primary);
+    font-size:18px;
+}
+
+.detail-content small{
+    display:block;
+    color:#aaa;
+}
+
+.detail-content strong{
+    color:white;
+}
+
+/* GALLERY */
+.gallery{
+    display:grid;
+    grid-template-columns:
+    repeat(auto-fill,minmax(220px,1fr));
+
+    gap:15px;
+}
+
+.gallery-item{
+    position:relative;
+    overflow:hidden;
+    border-radius:14px;
+}
+
+.gallery-item img{
+    width:100%;
+    height:220px;
+    object-fit:cover;
+    transition:.3s;
+}
+
+.gallery-item:hover img{
+    transform:scale(1.05);
+}
+
+.overlay{
+    position:absolute;
+    inset:0;
+    background:rgba(0,0,0,.5);
+    opacity:0;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    gap:20px;
+    transition:.3s;
+}
+
+.gallery-item:hover .overlay{
+    opacity:1;
+}
+
+/* MOBILE */
+@media(max-width:768px){
+
+    .profile-head{
+        text-align:center;
+    }
+
+    .profile-img{
+        width:130px;
+        height:130px;
+    }
+
+    .username{
+        font-size:1.5rem;
+    }
+
+    .stats{
+        gap:20px;
+    }
+
+    .gallery{
+        grid-template-columns:1fr;
+    }
+}
+
+.follow-btn{
+    min-width:140px;
+    height:48px;
+    font-size:15px;
+    border-radius:12px;
+    font-weight:700;
+    box-shadow:0 8px 20px rgba(220,53,69,.25);
+}
+
+.follow-btn i{
+    margin-right:6px;
+}
+
+@media(max-width:768px){
+
+    .follow-btn{
+        width:100%;
+        margin-top:15px;
+    }
+
+}
+
+</style>
+
 </head>
 
 <body>
 
-<?php
-
-include("config.php");
-
-if(isset($_POST['target_id']))
-{
-    $target_id = $_POST['target_id'];
-
-    $sql = "SELECT * FROM users WHERE User_ID = $target_id;";
-
-    $stmt = $conn->prepare($sql);
-
-    if($stmt->execute())
-    {
-        $user_array = $stmt->get_result();
-    }
-    else{
-        header("location: home.php");
-
-        exit;
-    }
-}
-else
-{
-    header("location: home.php");
-}
-?>
-
-
 <?php include("navbar.php"); ?>
 
-<?php foreach ($user_array as $array_user){?>
+<?php foreach($user_array as $array_user){ ?>
 
-    <div class="row py-6 px-4"><div class="col-md-11 mx-auto">
+<div class="container py-5">
 
-        <div class="bg-white shadow rounded overflow-hidden">
+<div class="profile-wrapper">
 
-            <div class="px-4 pt-0 pb-4 cover">
+    <!-- COVER -->
+    <div class="cover"></div>
 
-                <div class="media align-items-end profile-head">
+    <!-- PROFILE HEAD -->
+    <div class="profile-head">
 
-                    <div class="profile mr-3">
+        <div class="d-flex flex-column flex-md-row align-items-md-end justify-content-between">
 
-                        <img src="<?php echo "assets/images/profiles/".$array_user['IMAGE'] ?>"  width="160" style="border-radius: 50%;">
+            <!-- IMAGE -->
+            <div class="mr-md-4">
 
-                        <br>
+                <img
+                src="<?php echo 'assets/images/profiles/'.$array_user['IMAGE']; ?>"
+                class="profile-img">
 
-                        <?php include('Check_FallowStatus.php');?>
+            </div>
 
-                        <?php if($following_status){?>
+            <!-- INFO -->
+            <div class="flex-grow-1 mt-4 mt-md-0">
 
-                            <form method="post" action="Unfollow_User.php">
+                <div class="username">
+                    <?php echo htmlspecialchars($array_user['USER_NAME']); ?>
+                </div>
 
-                                <input type="hidden" value="<?php echo $array_user['User_ID']?>" name="other_User_Id">
+                <div class="fullname">
+                    <?php echo htmlspecialchars($array_user['FULL_NAME']); ?>
+                </div>
 
-                                <button type="submit" name="unfollow" class="btn btn-outline-light btn-sm btn-block mt-2">Unfollow</button>
+                <!-- AGE -->
+                <?php
+                $age = "N/A";
 
-                            </form>
-                        <?php }else{ ?>
+                if(!empty($array_user['Birthdate'])){
+                    $birthDate = new DateTime($array_user['Birthdate']);
+                    $today = new DateTime();
+                    $age = $today->diff($birthDate)->y;
+                }
+                ?>
 
-                            <form method="post" action="fallow_user.php">
+                <div class="mt-3 text-light">
 
-                                <input type="hidden" name="fallow_person" value='<?php echo $array_user['User_ID'];?>'>
+                    <span class="mr-4">
+                        <i class="fas fa-venus-mars text-danger"></i>
+                        <?php echo $array_user['Gender'] ?: 'Not Set'; ?>
+                    </span>
 
-                                <button type="submit" name="fallow" class="btn btn-outline-light btn-sm btn-block mt-2">Follow</button>
+                    <span class="mr-4">
+                        <i class="fas fa-birthday-cake text-danger"></i>
+                        <?php echo $age; ?> years old
+                    </span>
 
-                            </form>
-                        <?php }?>
+                    <span>
+                        <i class="fas fa-calendar text-danger"></i>
+                        <?php echo $array_user['Birthdate'] ?: 'No Birthdate'; ?>
+                    </span>
 
-
-
-
-                    </div>
-
-                    <div class="media-body mb-5 text-white">
-
-                        <h4 class="mt-0 mb-0"><?php echo $array_user['USER_NAME'] ?></h4>
-
-                        <p class="small mb-4"><?php echo $array_user['FULL_NAME'] ?></p>
                 </div>
 
             </div>
-            </div>
 
-        <div class="bg-light p-4 d-flex justify-content-end text-center">
+            <!-- FOLLOW -->
+            <!-- FOLLOW BUTTON -->
+            <div class="mt-4 mt-md-0 text-md-right">
 
-            <ul class="list-inline mb-0">
-                <li class="list-inline-item"><h5 class="font-weight-bold mb-0 d-block"><?php echo $array_user['POSTS'] ?></h5><small class="text-muted">
+                <?php include('Check_FallowStatus.php'); ?>
 
-                    <i class="fas fa-image mr-1"></i>Photos</small> </li>
+                <?php if($following_status){ ?>
 
-                <li class="list-inline-item"> <h5 class="font-weight-bold mb-0 d-block"><?php echo $array_user['FALLOWERS'] ?></h5><small class="text-muted">
+                    <form method="post" action="Unfollow_User.php">
 
-                    <i class="fas fa-user mr-1"></i>Followers</small> </li>
+                        <input
+                        type="hidden"
+                        value="<?php echo $array_user['User_ID']?>"
+                        name="other_User_Id">
 
-                <li class="list-inline-item"> <h5 class="font-weight-bold mb-0 d-block"><?php echo $array_user['FALLOWING'] ?></h5><small class="text-muted">
+                        <button
+                        type="submit"
+                        name="unfollow"
+                        class="btn-custom btn-unfollow follow-btn">
 
-                    <i class="fas fa-user mr-1"></i>Following</small> </li>
-            </ul>
-        </div>
+                            <i class="fas fa-user-minus"></i>
+                            Unfollow
 
-        <div class="px-4 py-3">
+                        </button>
 
-            <h5 class="mb-0">About</h5>
-
-            <div class="p-4 rounded shadow-sm bg-light">
-
-                <p class="font-italic mb-0"><?php echo " ".$array_user['BIO'] ?></p>
-
-            </div>
-        </div>
-
-        <div class="px-4 py-3">
-            <h5 class="mb-2">Interests</h5>
-
-            <div class="p-3 bg-light rounded">
-
-                <?php if($tags_result->num_rows > 0){ ?>
-                    
-                    <?php while($tag = $tags_result->fetch_assoc()){ ?>
-                        <span class="badge badge-primary m-1" style="padding:8px 12px; font-size:14px;">
-                            <?php echo $tag['Tag_Name']; ?>
-                        </span>
-                    <?php } ?>
+                    </form>
 
                 <?php } else { ?>
-                    <p class="text-muted">No tags selected yet.</p>
+
+                    <form method="post" action="fallow_user.php">
+
+                        <input
+                        type="hidden"
+                        name="fallow_person"
+                        value="<?php echo $array_user['User_ID'];?>">
+
+                        <button
+                        type="submit"
+                        name="fallow"
+                        class="btn-custom btn-follow follow-btn">
+
+                            <i class="fas fa-user-plus"></i>
+                            Follow
+
+                        </button>
+
+                    </form>
+
                 <?php } ?>
 
             </div>
+
         </div>
-        
 
-        <div class="px-4 py-3">
+    </div>
 
-            <h5 class="mb-0">Social</h5>
+    <!-- STATS -->
+    <div class="stats">
 
-                <div class="p-4 rounded shadow-sm bg-light">
+        <div>
+            <div class="stat-number">
+                <?php echo $array_user['POSTS']; ?>
+            </div>
+            <div class="stat-label">Posts</div>
+        </div>
 
-                    <p class="mb-3 font-italic"><i class="bi bi-envelope fa-lg m-lg-2"></i>Email : <?php echo " ".$array_user['EMAIL'] ?></p>
+        <div>
+            <div class="stat-number">
+                <?php echo $array_user['FALLOWERS']; ?>
+            </div>
+            <div class="stat-label">Followers</div>
+        </div>
 
-                    <p class="mb-3 font-italic"><i class="bi bi-box-arrow-up-right fa-lg m-lg-2"></i>FaceBook : <?php echo " ".$array_user['FACEBOOK'] ?></p>
+        <div>
+            <div class="stat-number">
+                <?php echo $array_user['FALLOWING']; ?>
+            </div>
+            <div class="stat-label">Following</div>
+        </div>
 
-                    <p class="mb-3 font-italic"><i class="bi bi-whatsapp fa-lg m-lg-2"></i>WhatsApp : <?php echo " ".$array_user['WHATSAPP'] ?></p>
+    </div>
 
+    <div class="container py-4">
+
+        <!-- ABOUT -->
+        <div class="info-card">
+
+            <div class="section-title">
+                About
+            </div>
+
+            <p style="color:#ddd;">
+                <?php
+                echo !empty($array_user['BIO'])
+                ?
+                nl2br(htmlspecialchars($array_user['BIO']))
+                :
+                "No bio yet.";
+                ?>
+            </p>
+
+        </div>
+
+        <!-- DETAILS -->
+        <div class="info-card">
+
+            <div class="section-title">
+                Profile Details
+            </div>
+
+            <div class="detail-box">
+
+                <div class="detail-icon">
+                    <i class="fas fa-envelope"></i>
                 </div>
-        </div>
 
-<?php }?>
+                <div class="detail-content">
+                    <small>Email</small>
+                    <strong>
+                        <?php echo htmlspecialchars($array_user['EMAIL']); ?>
+                    </strong>
+                </div>
 
-        <div class="py-4 px-4">
+            </div>
 
+            <div class="detail-box">
 
-            <div class="d-flex align-items-center justify-content-between mb-3">
+                <div class="detail-icon">
+                    <i class="fab fa-facebook"></i>
+                </div>
 
+                <div class="detail-content">
+                    <small>Facebook</small>
+                    <strong>
+                        <?php echo $array_user['FACEBOOK'] ?: 'No Facebook'; ?>
+                    </strong>
+                </div>
 
-                <h5 class="mb-0">Recent photos</h5>
+            </div>
 
-            </div> <div class="row">
+            <div class="detail-box">
 
-                <div class="gallery">
+                <div class="detail-icon">
+                    <i class="fab fa-whatsapp"></i>
+                </div>
 
+                <div class="detail-content">
+                    <small>WhatsApp</small>
+                    <strong>
+                        <?php echo $array_user['WHATSAPP'] ?: 'No WhatsApp'; ?>
+                    </strong>
+                </div>
 
-                    <?php include("get_targetPosts.php"); ?>
-
-                    <!--loop over the results-->
-
-                    <?php foreach($posts as $post){ ?>
-
-                        <div class="gallery-items">
-
-                            <img src="<?php echo "./assets/images/posts/".$post['Img_Path'];?>" alt="post" class="gallery-img">
-
-                            <div class="gallery-item-info">
-
-                                <ul>
-
-                                    <li class="gallery-items-likes"><span class="hide-gallery-elements">Reactions : <?php echo $post['Likes'];?></span>
-
-                                        <i class="icon fas fa-thumbs-up"></i>
-
-                                    </li>
-
-                                    <li class="gallery-items-likes"><span class="hide-gallery-elements">Opinions</span>
-
-                                        <a href="single-post.php?post_id=<?php echo $post['Post_ID'];?>" target="_blank" style="color: #dc3545"><i class="icon fas fa-comment"></i></a>
-
-                                    </li>
-
-                                </ul>
-
-                            </div>
-
-                        </div>
-
-                    <?php } ?></div>
             </div>
 
         </div>
 
-        </div>
+        <!-- INTERESTS -->
+        <div class="info-card">
+
+            <div class="section-title">
+                Interests
+            </div>
+
+            <?php if($tags_result->num_rows > 0){ ?>
+
+                <?php while($tag = $tags_result->fetch_assoc()){ ?>
+
+                    <span class="tag-badge">
+                        #<?php echo $tag['Tag_Name']; ?>
+                    </span>
+
+                <?php } ?>
+
+            <?php } else { ?>
+
+                <p class="text-muted">
+                    No interests selected yet.
+                </p>
+
+            <?php } ?>
 
         </div>
 
-</body>
+        <!-- POSTS -->
+        <div class="info-card">
 
-<script type="text/javascript">
-    document.getElementById("logo-img").onclick = function () {
-        location.href = "home.php";
-    };
+            <div class="section-title">
+                Recent Posts
+            </div>
+
+            <div class="gallery">
+
+                <?php include("get_targetPosts.php"); ?>
+
+                <?php foreach($posts as $post){ ?>
+
+                    <div class="gallery-item">
+
+                        <img
+                        src="<?php echo './assets/images/posts/'.$post['Img_Path'];?>">
+
+                        <div class="overlay">
+
+                            <div>
+                                ❤️ <?php echo $post['Likes']; ?>
+                            </div>
+
+                            <a
+                            href="single-post.php?post_id=<?php echo $post['Post_ID'];?>"
+                            target="_blank"
+                            style="color:white;">
+
+                                <i class="fas fa-comment fa-2x"></i>
+
+                            </a>
+
+                        </div>
+
+                    </div>
+
+                <?php } ?>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+</div>
+
+<?php } ?>
+
+<script>
+document.getElementById("logo-img").onclick = function () {
+    location.href = "home.php";
+};
 </script>
 
+</body>
 </html>

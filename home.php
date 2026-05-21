@@ -158,6 +158,11 @@ if($user['is_tagged'] == 0){
             transform: scale(1.02);
         }
 
+        /* Style for text-only posts (no image) */
+        .post #post_info_data {
+            min-height: 150px;
+        }
+
         .post-content {
             padding: 1rem;
         }
@@ -484,7 +489,9 @@ if($user['is_tagged'] == 0){
 
                 </div>
 
+                <?php if(!empty($post['Img_Path'])): ?>
                 <img src="<?php echo "assets/images/posts/". $post['Img_Path']; ?>" class="post-img">
+                <?php endif; ?>
 
                     <div id="post_info_data">
 
