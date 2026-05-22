@@ -7,7 +7,7 @@ if(!isset($_SESSION['id'])){
     exit;
 }
 
-$result = $conn->query("SELECT * FROM tags");
+$result = $conn->query("SELECT * FROM tags ORDER BY Category, Tag_Name");
 ?>
 
 <!DOCTYPE html>
@@ -151,6 +151,22 @@ body {
     color: var(--primary);
 }
 
+/* CATEGORY HEADER */
+.category-header {
+    font-size: 0.85rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    color: var(--primary);
+    margin-top: 15px;
+    margin-bottom: 8px;
+    padding: 8px 10px;
+    border-bottom: 1px solid rgba(220,53,69,0.3);
+}
+
+.category-header:first-child {
+    margin-top: 0;
+}
+
 /* SCROLLBAR */
 .tag-container::-webkit-scrollbar {
     width: 6px;
@@ -180,10 +196,18 @@ body {
 
 <div class="tag-container">
 
-<?php while ($row = $result->fetch_assoc()) { ?>
+<?php 
+$current_category = null;
+while ($row = $result->fetch_assoc()) { 
+    // Display category header if category changed
+    if ($current_category !== $row['Category']) {
+        $current_category = $row['Category'];
+        echo '<div class="category-header">' . htmlspecialchars($current_category) . '</div>';
+    }
+?>
     <div class="tag" onclick="toggleTag(this)">
         <input type="checkbox" name="tags[]" value="<?php echo $row['Tag_ID']; ?>" hidden>
-        <?php echo $row['Tag_Name']; ?>
+        <?php echo htmlspecialchars($row['Tag_Name']); ?>
     </div>
 <?php } ?>
 

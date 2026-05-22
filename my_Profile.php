@@ -15,10 +15,11 @@ $stmt->execute();
 $user = $stmt->get_result()->fetch_assoc();
 
 $tags_stmt = $conn->prepare("
-    SELECT t.Tag_Name 
+    SELECT t.Tag_Name, t.Category
     FROM user_tags ut
     JOIN tags t ON ut.Tag_ID = t.Tag_ID
     WHERE ut.User_ID = ?
+    ORDER BY t.Category, t.Tag_Name
 ");
 $tags_stmt->bind_param("i", $user_id);
 $tags_stmt->execute();
@@ -309,6 +310,28 @@ body{
     display:flex;
     flex-wrap:wrap;
     gap:10px;
+    align-items:flex-start;
+}
+
+.tag-category{
+    display:flex;
+    flex-direction:column;
+    gap:8px;
+    margin-right:15px;
+}
+
+.tag-category-label{
+    font-size:11px;
+    font-weight:700;
+    text-transform:uppercase;
+    color:var(--primary);
+    letter-spacing:0.5px;
+}
+
+.tag-category-items{
+    display:flex;
+    flex-wrap:wrap;
+    gap:8px;
 }
 
 .tag{
@@ -626,13 +649,30 @@ body{
 
         <?php if($tags_result->num_rows > 0): ?>
 
-            <?php while($tag = $tags_result->fetch_assoc()): ?>
+            <?php 
+            $tags_array = [];
+            $tags_result->data_seek(0);
+            while($tag = $tags_result->fetch_assoc()): 
+                $category = $tag['Category'] ?? 'General';
+                if (!isset($tags_array[$category])) {
+                    $tags_array[$category] = [];
+                }
+                $tags_array[$category][] = $tag['Tag_Name'];
+            endwhile;
+            ?>
 
-                <div class="tag">
-                    #<?php echo htmlspecialchars($tag['Tag_Name']); ?>
+            <?php foreach($tags_array as $category => $tag_names): ?>
+                <div class="tag-category">
+                    <div class="tag-category-label"><?php echo htmlspecialchars($category); ?></div>
+                    <div class="tag-category-items">
+                        <?php foreach($tag_names as $tag_name): ?>
+                            <div class="tag">
+                                #<?php echo htmlspecialchars($tag_name); ?>
+                            </div>
+                        <?php endforeach; ?>
+                    </div>
                 </div>
-
-            <?php endwhile; ?>
+            <?php endforeach; ?>
 
         <?php else: ?>
 

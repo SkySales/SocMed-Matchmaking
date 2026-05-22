@@ -52,6 +52,18 @@ if(isset($_POST['target_id']))
 
         exit;
     }
+    
+    // Get user tags
+    $tags_stmt = $conn->prepare("
+        SELECT t.Tag_Name, t.Category
+        FROM user_tags ut
+        JOIN tags t ON ut.Tag_ID = t.Tag_ID
+        WHERE ut.User_ID = ?
+        ORDER BY t.Category, t.Tag_Name
+    ");
+    $tags_stmt->bind_param("i", $target_id);
+    $tags_stmt->execute();
+    $tags_result = $tags_stmt->get_result();
 }
 else
 {
@@ -109,6 +121,40 @@ else
 
         <p><span class="profile-real-name"><?php echo $array_user['FULL_NAME'] ?></span><?php echo " ".$array_user['BIO'] ?></p>
 
+      </div>
+
+      <!-- INTERESTS/TAGS SECTION -->
+      <div class="profile-tags-section" style="margin-top: 20px; margin-bottom: 20px;">
+        <?php if($tags_result->num_rows > 0): ?>
+          <div style="display: flex; flex-wrap: wrap; gap: 20px;">
+            <?php 
+            $tags_array = [];
+            $tags_result->data_seek(0);
+            while($tag = $tags_result->fetch_assoc()): 
+                $category = $tag['Category'] ?? 'General';
+                if (!isset($tags_array[$category])) {
+                    $tags_array[$category] = [];
+                }
+                $tags_array[$category][] = $tag['Tag_Name'];
+            endwhile;
+            ?>
+
+            <?php foreach($tags_array as $category => $tag_names): ?>
+              <div style="display: flex; flex-direction: column; gap: 8px;">
+                <div style="font-size: 11px; font-weight: 700; text-transform: uppercase; color: #dc3545; letter-spacing: 0.5px;">
+                  <?php echo htmlspecialchars($category); ?>
+                </div>
+                <div style="display: flex; flex-wrap: wrap; gap: 8px;">
+                  <?php foreach($tag_names as $tag_name): ?>
+                    <div style="background: linear-gradient(135deg, #dc3545, #6f0d18); color: white; padding: 8px 14px; border-radius: 30px; font-size: 13px; font-weight: 600;">
+                      #<?php echo htmlspecialchars($tag_name); ?>
+                    </div>
+                  <?php endforeach; ?>
+                </div>
+              </div>
+            <?php endforeach; ?>
+          </div>
+        <?php endif; ?>
       </div>
 
       <form action="">
